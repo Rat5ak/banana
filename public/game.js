@@ -5,6 +5,7 @@ const collectionAreaEl = document.getElementById('collection-area');
 const toggleBtn = document.getElementById('collection-toggle');
 const usernameInput = document.getElementById('username');
 const saveScoreBtn = document.getElementById('save-score');
+const setNameBtn = document.getElementById('set-name');
 const scoreEl = document.getElementById('score');
 const leaderboardEl = document.getElementById('leaderboard');
 
@@ -12,6 +13,11 @@ const MAX_BANANAS = 8;
 let bananas = [];
 let collection = JSON.parse(localStorage.getItem('collection') || '[]');
 let score = 0;
+
+const savedName = localStorage.getItem('username');
+if (savedName) {
+  usernameInput.value = savedName;
+}
 
 toggleBtn.addEventListener('click', () => {
   if (collectionAreaEl.style.display === 'none') {
@@ -79,6 +85,8 @@ function updateCollection() {
     div.innerHTML = `<div class="emoji">${info.emoji}</div><div>${type} x${info.count}</div>`;
     collectionEl.appendChild(div);
   });
+  score = collection.length;
+  updateScore();
 }
 
 function saveCollection() {
@@ -89,17 +97,22 @@ function updateScore() {
   scoreEl.textContent = score;
 }
 
-function fetchLeaderboard() {
-  fetch('/api/leaderboard')
-    .then(res => res.json())
-    .then(data => {
-      leaderboardEl.innerHTML = '';
-      data.forEach(entry => {
-        const li = document.createElement('li');
-        li.textContent = `${entry.name}: ${entry.score}`;
-        leaderboardEl.appendChild(li);
-      });
-    });
+function loadLeaderboard() {
+  return JSON.parse(localStorage.getItem('leaderboard') || '[]');
+}
+
+function saveLeaderboard(data) {
+  localStorage.setItem('leaderboard', JSON.stringify(data));
+}
+
+function updateLeaderboard() {
+  const data = loadLeaderboard().sort((a, b) => b.score - a.score).slice(0, 10);
+  leaderboardEl.innerHTML = '';
+  data.forEach(entry => {
+    const li = document.createElement('li');
+    li.textContent = `${entry.name}: ${entry.score}`;
+    leaderboardEl.appendChild(li);
+  });
 }
 
 bananaEl.addEventListener('click', () => {
@@ -108,22 +121,23 @@ bananaEl.addEventListener('click', () => {
   if (bananas.length > MAX_BANANAS) {
     bananas.pop();
   }
-  score++;
-  updateScore();
   updateInventory();
 });
 
 saveScoreBtn.addEventListener('click', () => {
-  const name = usernameInput.value.trim() || 'Anonymous';
-  fetch('/api/score', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, score })
-  }).then(fetchLeaderboard);
+  const storedName = localStorage.getItem('username') || usernameInput.value.trim() || 'Anonymous';
+  const data = loadLeaderboard();
+  data.push({ name: storedName, score: collection.length });
+  saveLeaderboard(data);
+  updateLeaderboard();
 });
 
-fetchLeaderboard();
-updateScore();
-
+setNameBtn.addEventListener('click', () => {
+  const name = usernameInput.value.trim();
+  if (name) {
+    localStorage.setItem('username', name);
+  }
+});
+updateLeaderboard();
 updateInventory();
 updateCollection();
