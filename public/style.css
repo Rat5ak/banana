@@ -1,0 +1,31 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #f7f7f7;
+}
+
+#banana {
+  font-size: 5rem;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+#banana:active {
+  transform: scale(0.95);
+}
+
+#inventory {
+  margin-top: 20px;
+}
+
+.banana-item {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+}
+
+.banana-item .emoji {
+  font-size: 2rem;
+}
