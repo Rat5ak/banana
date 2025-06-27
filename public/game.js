@@ -4,8 +4,9 @@ const collectionEl = document.getElementById('collection');
 const collectionAreaEl = document.getElementById('collection-area');
 const toggleBtn = document.getElementById('collection-toggle');
 const usernameInput = document.getElementById('username');
+const pinInput = document.getElementById('pin');
 const saveScoreBtn = document.getElementById('save-score');
-const setNameBtn = document.getElementById('set-name');
+const setCredsBtn = document.getElementById('set-credentials');
 const scoreEl = document.getElementById('score');
 const leaderboardEl = document.getElementById('leaderboard');
 
@@ -15,8 +16,12 @@ let collection = JSON.parse(localStorage.getItem('collection') || '[]');
 let score = 0;
 
 const savedName = localStorage.getItem('username');
+const savedPin = localStorage.getItem('pin');
 if (savedName) {
   usernameInput.value = savedName;
+}
+if (savedPin) {
+  pinInput.value = savedPin;
 }
 
 toggleBtn.addEventListener('click', () => {
@@ -97,20 +102,18 @@ function updateScore() {
   scoreEl.textContent = score;
 }
 
-function loadLeaderboard() {
-  return JSON.parse(localStorage.getItem('leaderboard') || '[]');
+async function loadGlobalLeaderboard() {
+  const res = await fetch('/get-scores');
+  if (!res.ok) return [];
+  return await res.json();
 }
 
-function saveLeaderboard(data) {
-  localStorage.setItem('leaderboard', JSON.stringify(data));
-}
-
-function updateLeaderboard() {
-  const data = loadLeaderboard().sort((a, b) => b.score - a.score).slice(0, 10);
+async function updateLeaderboard() {
+  const data = (await loadGlobalLeaderboard()).slice(0, 10);
   leaderboardEl.innerHTML = '';
   data.forEach(entry => {
     const li = document.createElement('li');
-    li.textContent = `${entry.name}: ${entry.score}`;
+    li.textContent = `${entry.username}: ${entry.score}`;
     leaderboardEl.appendChild(li);
   });
 }
@@ -124,19 +127,41 @@ bananaEl.addEventListener('click', () => {
   updateInventory();
 });
 
-saveScoreBtn.addEventListener('click', () => {
-  const storedName = localStorage.getItem('username') || usernameInput.value.trim() || 'Anonymous';
-  const data = loadLeaderboard();
-  data.push({ name: storedName, score: collection.length });
-  saveLeaderboard(data);
+saveScoreBtn.addEventListener('click', async () => {
+  let name = localStorage.getItem('username') || usernameInput.value.trim();
+  if (!name) name = 'Anonymous';
+  let pin = localStorage.getItem('pin') || pinInput.value.trim();
+  if (!pin) {
+    pin = Math.floor(1000000 + Math.random() * 9000000).toString();
+    alert(`Your new PIN is ${pin}. Keep it safe!`);
+    localStorage.setItem('pin', pin);
+    pinInput.value = pin;
+  }
+  localStorage.setItem('username', name);
+  usernameInput.value = name;
+
+  await fetch('/submit-score', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: name, pin, score: collection.length })
+  });
+
   updateLeaderboard();
 });
 
-setNameBtn.addEventListener('click', () => {
+setCredsBtn.addEventListener('click', () => {
   const name = usernameInput.value.trim();
+  let pin = pinInput.value.trim();
+  if (!pin) {
+    pin = Math.floor(1000000 + Math.random() * 9000000).toString();
+    alert(`Your new PIN is ${pin}. Keep it safe!`);
+  }
   if (name) {
     localStorage.setItem('username', name);
+    usernameInput.value = name;
   }
+  localStorage.setItem('pin', pin);
+  pinInput.value = pin;
 });
 updateLeaderboard();
 updateInventory();

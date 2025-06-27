@@ -1,30 +1,40 @@
 # Banana Collector Game
 
 A simple web game where you collect bananas, some of which are rare and wear hats.
-Rare types now include Shiny (✨) and Rainbow (🌈) bananas in addition to the original Top Hat and Graduation varieties.
-Rare bananas can be added to your personal collection using the button that appears
-next to them. The collection sits in the top corner of the page and stays visible
-as you play. It is stored in your browser so it persists between visits. New bananas
-now appear first so you always see the latest ones at the top.
-next to them. The collection is stored in your browser so it persists between
-visits. You can also enter a name and submit your score to an in-memory
-leaderboard to compete with friends.
+Rare types include Shiny (✨) and Rainbow (🌈) bananas in addition to the original
+Top Hat and Graduation varieties. Rare bananas can be added to your personal
+collection using the button that appears next to them. The collection sits in the
+top corner of the page and stays visible as you play. It is stored in your browser
+so it persists between visits. New bananas now appear first so you always see the
+latest ones at the top.
+
+Scores are now submitted to a global leaderboard using Cloudflare Pages
+Functions and KV storage so everyone sees the same results.
 
 ## Setup
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Start the server:
-   ```bash
-   npm start
-   ```
-3. Open your browser to `http://localhost:3000` and start collecting bananas!
+This project is designed to run on **Cloudflare Pages** with Functions.
+
+1. Create a Pages project from this repository.
+2. In the Cloudflare dashboard go to **Pages → Functions → KV Namespaces** and
+   create a binding named `SCORES` (the namespace name can be anything).
+3. Deploy the site. Cloudflare will automatically detect the `functions/`
+   folder and expose `/submit-score` and `/get-scores` endpoints.
+4. After deployment open your site URL to start collecting bananas!
 
 ## Leaderboard
 
-Use the **Set Name** button to store your name locally. When you click
-**Submit Score**, your name and the number of bananas in your collection are
-saved to a leaderboard in your browser's local storage. The top scores are
-displayed in the leaderboard list.
+Click **Save Name/PIN** to store your credentials in the browser. The first time
+you save (or if you leave the PIN field blank) a random 7‑digit PIN is
+generated. Keep this PIN safe – you need the same username and PIN to update
+your score later or from another device.
+
+When you hit **Submit Score** the game sends a request to `/submit-score` with
+your username, PIN and current score. Scores are stored in the `SCORES` KV
+namespace and `/get-scores` returns the global leaderboard sorted by score.
+
+If you want to run the backend separately as a Cloudflare Worker instead of
+Pages Functions, copy the files in `functions/` to a Worker project and bind the
+same KV namespace.
+
+Licensed under the MIT License. See [LICENSE](LICENSE) for details.
