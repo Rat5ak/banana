@@ -8,6 +8,9 @@ top corner of the page and stays visible as you play. It is stored in your brows
 so it persists between visits. New bananas now appear first so you always see the
 latest ones at the top.
 
+If you manage to grab ten ordinary bananas in a row the game resets your stash,
+forcing you to start collecting again.
+
 Scores are now submitted to a global leaderboard using Cloudflare Pages
 Functions and KV storage so everyone sees the same results.
 

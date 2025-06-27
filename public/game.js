@@ -16,6 +16,7 @@ const MAX_BANANAS = 8;
 let bananas = [];
 let collection = JSON.parse(localStorage.getItem('collection') || '[]');
 let score = 0;
+let commonStreak = 0;
 
 const savedName = localStorage.getItem('username');
 const savedPin = localStorage.getItem('pin');
@@ -134,6 +135,25 @@ async function updateLeaderboard() {
 bananaEl.addEventListener('click', () => {
   const b = randomBanana();
   bananas.unshift(b);
+
+  if (b.type === 'Common Banana') {
+    commonStreak++;
+  } else {
+    commonStreak = 0;
+  }
+
+  if (commonStreak >= 10) {
+    alert('10 common bananas in a row! Game over.');
+    bananas = [];
+    collection = [];
+    saveCollection();
+    score = 0;
+    commonStreak = 0;
+    updateInventory();
+    updateCollection();
+    return;
+  }
+
   if (bananas.length > MAX_BANANAS) {
     bananas.pop();
   }
