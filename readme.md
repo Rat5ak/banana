@@ -27,11 +27,14 @@ This project is designed to run on **Cloudflare Pages** with Functions.
 Click **Save Name/PIN** to store your credentials in the browser. The first time
 you save (or if you leave the PIN field blank) a random 7‑digit PIN is
 generated. Keep this PIN safe – you need the same username and PIN to update
-your score later or from another device.
+your score later or from another device. You can sign in on another computer by
+entering the same username and PIN.
 
 When you hit **Submit Score** the game sends a request to `/submit-score` with
 your username, PIN and current score. Scores are stored in the `SCORES` KV
 namespace and `/get-scores` returns the global leaderboard sorted by score.
+Use the **Show Leaderboard** button in the game to toggle the leaderboard
+overlay and see the top scores.
 
 If you want to run the backend separately as a Cloudflare Worker instead of
 Pages Functions, copy the files in `functions/` to a Worker project and bind the
