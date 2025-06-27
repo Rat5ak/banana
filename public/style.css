@@ -55,6 +55,19 @@ body {
   cursor: pointer;
 }
 
+#leaderboard {
+  list-style: none;
+  padding: 0;
+  max-width: 200px;
+  margin: 10px auto;
+  text-align: left;
+}
+
+#leaderboard li {
+  border-bottom: 1px solid #ddd;
+  padding: 4px 0;
+}
+
 @media (max-width: 600px) {
   #banana {
     font-size: 3rem;
