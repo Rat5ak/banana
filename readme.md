@@ -1,6 +1,9 @@
 # Banana Collector Game
 
 A simple web game where you collect bananas, some of which are rare and wear hats.
+Rare bananas can be added to your personal collection using the button that appears
+next to them. The collection is stored in your browser so it persists between
+visits.
 
 ## Setup
 
