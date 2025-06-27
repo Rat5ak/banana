@@ -157,6 +157,10 @@ saveScoreBtn.addEventListener('click', async () => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username: name, pin, score: collection.length })
+  }).then(res => {
+    if (res.status === 403) {
+      alert('Incorrect PIN for this username');
+    }
   });
 
   updateLeaderboard();
