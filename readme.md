@@ -5,6 +5,8 @@ Rare bananas can be added to your personal collection using the button that appe
 next to them. The collection sits in the top corner of the page and stays visible
 as you play. It is stored in your browser so it persists between visits. New bananas
 now appear first so you always see the latest ones at the top.
+next to them. The collection is stored in your browser so it persists between
+visits.
 
 ## Setup
 

@@ -18,6 +18,7 @@ body {
   margin-top: 20px;
 }
 
+
 #collection-area {
   position: fixed;
   top: 10px;
@@ -30,6 +31,10 @@ body {
 
 #collection {
   margin-top: 10px;
+
+#collection {
+  margin-top: 20px;
+
 }
 
 .banana-item {
