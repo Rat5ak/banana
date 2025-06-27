@@ -24,6 +24,10 @@ This project is designed to run on **Cloudflare Pages** with Functions.
 3. Deploy the site. Cloudflare will automatically detect the `functions/`
    folder and expose `/submit-score` and `/get-scores` endpoints.
 4. After deployment open your site URL to start collecting bananas!
+   If you receive a `405 Method Not Allowed` error when submitting scores,
+   make sure your project is deployed as **Cloudflare Pages** with Functions
+   enabled so the `/submit-score` and `/get-scores` routes are handled by the
+   backend code.
 
 ## Leaderboard
 
