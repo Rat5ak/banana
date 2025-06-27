@@ -31,10 +31,6 @@ body {
 
 #collection {
   margin-top: 10px;
-
-#collection {
-  margin-top: 20px;
-
 }
 
 .banana-item {
@@ -52,5 +48,4 @@ body {
 .banana-item button {
   margin-top: 5px;
   cursor: pointer;
-}
 }
