@@ -52,7 +52,7 @@ function saveCollection() {
 
 bananaEl.addEventListener('click', () => {
   const b = randomBanana();
-  bananas.push(b);
+  bananas.unshift(b);
   updateInventory();
 });
 
