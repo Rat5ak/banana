@@ -3,6 +3,8 @@ const inventoryEl = document.getElementById('inventory');
 const collectionEl = document.getElementById('collection');
 const collectionAreaEl = document.getElementById('collection-area');
 const toggleBtn = document.getElementById('collection-toggle');
+
+const MAX_BANANAS = 8;
 let bananas = [];
 let collection = JSON.parse(localStorage.getItem('collection') || '[]');
 
@@ -18,12 +20,16 @@ toggleBtn.addEventListener('click', () => {
 
 function randomBanana() {
   const chance = Math.random();
-  if (chance < 0.05) {
-    return { emoji: '🍌🎩', type: 'Top Hat Banana', rare: true };
+  if (chance < 0.02) {
+    return { emoji: '🍌✨', type: 'Shiny Banana', rare: true, added: false };
+  } else if (chance < 0.04) {
+    return { emoji: '🍌🌈', type: 'Rainbow Banana', rare: true, added: false };
+  } else if (chance < 0.07) {
+    return { emoji: '🍌🎩', type: 'Top Hat Banana', rare: true, added: false };
   } else if (chance < 0.10) {
-    return { emoji: '🍌🎓', type: 'Graduation Banana', rare: true };
+    return { emoji: '🍌🎓', type: 'Graduation Banana', rare: true, added: false };
   } else {
-    return { emoji: '🍌', type: 'Common Banana', rare: false };
+    return { emoji: '🍌', type: 'Common Banana', rare: false, added: false };
   }
 }
 
@@ -35,11 +41,15 @@ function updateInventory() {
     div.innerHTML = `<div class="emoji">${b.emoji}</div><div>${b.type}</div>`;
     if (b.rare) {
       const btn = document.createElement('button');
-      btn.textContent = 'Add to Collection';
+      btn.textContent = b.added ? 'Added' : 'Add to Collection';
+      btn.disabled = b.added;
       btn.addEventListener('click', () => {
+        if (b.added) return;
+        b.added = true;
         collection.push(b);
         saveCollection();
         updateCollection();
+        btn.textContent = 'Added';
         btn.disabled = true;
       });
       div.appendChild(btn);
@@ -73,6 +83,9 @@ function saveCollection() {
 bananaEl.addEventListener('click', () => {
   const b = randomBanana();
   bananas.unshift(b);
+  if (bananas.length > MAX_BANANAS) {
+    bananas.pop();
+  }
   updateInventory();
 });
 

@@ -16,6 +16,10 @@ body {
 
 #inventory {
   margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
 
 
@@ -34,11 +38,12 @@ body {
 }
 
 .banana-item {
-  display: inline-block;
+  flex: 0 1 120px;
   margin: 10px;
   padding: 10px;
   border: 1px solid #ddd;
   background-color: #fff;
+  box-sizing: border-box;
 }
 
 .banana-item .emoji {
@@ -48,4 +53,14 @@ body {
 .banana-item button {
   margin-top: 5px;
   cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  #banana {
+    font-size: 3rem;
+  }
+  .banana-item {
+    flex-basis: 80px;
+    margin: 5px;
+  }
 }

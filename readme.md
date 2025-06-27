@@ -1,6 +1,7 @@
 # Banana Collector Game
 
 A simple web game where you collect bananas, some of which are rare and wear hats.
+Rare types now include Shiny (✨) and Rainbow (🌈) bananas in addition to the original Top Hat and Graduation varieties.
 Rare bananas can be added to your personal collection using the button that appears
 next to them. The collection sits in the top corner of the page and stays visible
 as you play. It is stored in your browser so it persists between visits. New bananas
