@@ -24,6 +24,7 @@ leaderboard to compete with friends.
 
 ## Leaderboard
 
-Enter a name in the field on the page and click **Submit Score** to record
-your current number of collected bananas. The top scores are displayed in the
-leaderboard list.
+Use the **Set Name** button to store your name locally. When you click
+**Submit Score**, your name and the number of bananas in your collection are
+saved to a leaderboard in your browser's local storage. The top scores are
+displayed in the leaderboard list.
