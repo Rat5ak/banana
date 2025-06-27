@@ -33,6 +33,16 @@ body {
   text-align: left;
 }
 
+#leaderboard-area {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
 #collection {
   margin-top: 10px;
 }

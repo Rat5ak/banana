@@ -9,6 +9,8 @@ const saveScoreBtn = document.getElementById('save-score');
 const setCredsBtn = document.getElementById('set-credentials');
 const scoreEl = document.getElementById('score');
 const leaderboardEl = document.getElementById('leaderboard');
+const leaderboardAreaEl = document.getElementById('leaderboard-area');
+const leaderboardToggleBtn = document.getElementById('leaderboard-toggle');
 
 const MAX_BANANAS = 8;
 let bananas = [];
@@ -31,6 +33,17 @@ toggleBtn.addEventListener('click', () => {
   } else {
     collectionAreaEl.style.display = 'none';
     toggleBtn.textContent = 'Show Collection';
+  }
+});
+
+leaderboardToggleBtn.addEventListener('click', () => {
+  if (leaderboardAreaEl.style.display === 'none') {
+    leaderboardAreaEl.style.display = 'block';
+    leaderboardToggleBtn.textContent = 'Hide Leaderboard';
+    updateLeaderboard();
+  } else {
+    leaderboardAreaEl.style.display = 'none';
+    leaderboardToggleBtn.textContent = 'Show Leaderboard';
   }
 });
 
