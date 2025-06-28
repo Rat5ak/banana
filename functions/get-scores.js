@@ -1,4 +1,24 @@
 export async function onRequest(context) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  };
+
+  if (context.request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  if (context.request.method !== 'GET') {
+    return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+  }
+
+  const kv = context.env.KV_BINDING || context.env.SCORES;
+  if (!kv) {
+    return new Response('KV namespace not configured', {
+      status: 500,
+      headers: corsHeaders,
+    });
   if (context.request.method !== 'GET') {
     return new Response('Method Not Allowed', { status: 405, headers: { 'Access-Control-Allow-Origin': '*' } });
   }
@@ -22,6 +42,8 @@ export async function onRequest(context) {
 
   return new Response(JSON.stringify(result), {
     headers: {
+      ...corsHeaders,
+      'Content-Type': 'application/json',
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
     },
