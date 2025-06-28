@@ -19,6 +19,12 @@ export async function onRequest(context) {
       status: 500,
       headers: corsHeaders,
     });
+  if (context.request.method !== 'GET') {
+    return new Response('Method Not Allowed', { status: 405, headers: { 'Access-Control-Allow-Origin': '*' } });
+  }
+  const kv = context.env.SCORES || context.env.KV_BINDING;
+  if (!kv) {
+    return new Response('KV namespace not configured', { status: 500, headers: { 'Access-Control-Allow-Origin': '*' } });
   }
   const list = await kv.list();
 
@@ -38,6 +44,8 @@ export async function onRequest(context) {
     headers: {
       ...corsHeaders,
       'Content-Type': 'application/json',
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
     },
   });
 }
