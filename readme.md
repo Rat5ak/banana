@@ -20,10 +20,17 @@ This project is designed to run on **Cloudflare Pages** with Functions.
 
 1. Create a Pages project from this repository.
 2. In the Cloudflare dashboard go to **Pages → Functions → KV Namespaces** and
-   create a binding named `SCORES` (the namespace name can be anything).
+   create a binding. The examples here use `SCORES` but any name works – for
+   instance a binding of `KV_BINDING` will also be picked up by the code.
+   See the [Cloudflare KV quick start guide](https://developers.cloudflare.com/kv/get-started/)
+   for more details.
 3. Deploy the site. Cloudflare will automatically detect the `functions/`
    folder and expose `/submit-score` and `/get-scores` endpoints.
 4. After deployment open your site URL to start collecting bananas!
+   If you receive a `405 Method Not Allowed` error when submitting scores,
+   make sure your project is deployed as **Cloudflare Pages** with Functions
+   enabled so the `/submit-score` and `/get-scores` routes are handled by the
+   backend code.
 
 ## Leaderboard
 
@@ -41,6 +48,15 @@ overlay and see the top scores.
 
 If you want to run the backend separately as a Cloudflare Worker instead of
 Pages Functions, copy the files in `functions/` to a Worker project and bind the
-same KV namespace.
+same KV namespace. Below is a minimal `wrangler.toml` example:
+
+```toml
+kv_namespaces = [
+  { binding = "KV_BINDING", id = "<your_namespace_id>" }
+]
+```
+
+The binding name in your configuration is picked up automatically by the code,
+so you can use `SCORES`, `KV_BINDING`, or any other name.
 
 Licensed under the MIT License. See [LICENSE](LICENSE) for details.

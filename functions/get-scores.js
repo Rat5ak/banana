@@ -1,7 +1,24 @@
-export async function onRequestGet(context) {
-  const kv = context.env.SCORES || context.env.KV_BINDING;
+export async function onRequest(context) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  };
+
+  if (context.request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  if (context.request.method !== 'GET') {
+    return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+  }
+
+  const kv = context.env.KV_BINDING || context.env.SCORES;
   if (!kv) {
-    return new Response('KV namespace not configured', { status: 500 });
+    return new Response('KV namespace not configured', {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
   const list = await kv.list();
 
@@ -18,6 +35,9 @@ export async function onRequestGet(context) {
     .sort((a, b) => b.score - a.score);
 
   return new Response(JSON.stringify(result), {
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      ...corsHeaders,
+      'Content-Type': 'application/json',
+    },
   });
 }
