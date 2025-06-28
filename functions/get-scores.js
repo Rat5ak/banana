@@ -1,10 +1,24 @@
 export async function onRequest(context) {
-  if (context.request.method !== 'GET') {
-    return new Response('Method Not Allowed', { status: 405, headers: { 'Access-Control-Allow-Origin': '*' } });
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  };
+
+  if (context.request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: corsHeaders });
   }
-  const kv = context.env.SCORES || context.env.KV_BINDING;
+
+  if (context.request.method !== 'GET') {
+    return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
+  }
+
+  const kv = context.env.KV_BINDING || context.env.SCORES;
   if (!kv) {
-    return new Response('KV namespace not configured', { status: 500, headers: { 'Access-Control-Allow-Origin': '*' } });
+    return new Response('KV namespace not configured', {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
   const list = await kv.list();
 
@@ -22,8 +36,8 @@ export async function onRequest(context) {
 
   return new Response(JSON.stringify(result), {
     headers: {
+      ...corsHeaders,
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
     },
   });
 }
