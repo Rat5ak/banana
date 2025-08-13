@@ -132,7 +132,60 @@ async function updateLeaderboard() {
   });
 }
 
-bananaEl.addEventListener('click', () => {
+function createParticleEffect(x, y) {
+  const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'];
+  
+  for (let i = 0; i < 12; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.position = 'absolute';
+    particle.style.left = x + 'px';
+    particle.style.top = y + 'px';
+    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+    particle.style.width = Math.random() * 6 + 2 + 'px';
+    particle.style.height = particle.style.width;
+    particle.style.borderRadius = '50%';
+    particle.style.pointerEvents = 'none';
+    particle.style.zIndex = '1000';
+    
+    const angle = (Math.PI * 2 * i) / 12;
+    const velocity = Math.random() * 3 + 2;
+    const vx = Math.cos(angle) * velocity;
+    const vy = Math.sin(angle) * velocity;
+    
+    document.body.appendChild(particle);
+    
+    let posX = x;
+    let posY = y;
+    let opacity = 1;
+    
+    const animate = () => {
+      posX += vx;
+      posY += vy - 0.5; // gravity effect
+      opacity -= 0.02;
+      
+      particle.style.left = posX + 'px';
+      particle.style.top = posY + 'px';
+      particle.style.opacity = opacity;
+      
+      if (opacity > 0) {
+        requestAnimationFrame(animate);
+      } else {
+        document.body.removeChild(particle);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }
+}
+
+bananaEl.addEventListener('click', (e) => {
+  // Create particle effect at click position
+  const rect = bananaEl.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+  createParticleEffect(x, y);
+  
   const b = randomBanana();
   bananas.unshift(b);
 
