@@ -694,6 +694,7 @@ button:disabled {
   transform: rotate(45deg);
   transition: all 0.6s ease;
   opacity: 0;
+  pointer-events: none; /* Prevent intercepting mouse events */
 }
 
 .banana-item:hover::before {
@@ -710,6 +711,25 @@ button:disabled {
   transform: translateY(-5px) scale(1.05);
   border-color: #4ecdc4;
   box-shadow: 0 10px 30px rgba(78, 205, 196, 0.3);
+}
+
+/* Fix button interaction issues */
+.collection-btn {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* Prevent conflicting transforms when button is hovered */
+.banana-item:hover .collection-btn {
+  /* Reset parent transform effect for the button specifically */
+  transform: none;
+}
+
+.collection-btn:hover {
+  transform: translateY(-5px) scale(1.05) !important;
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.6) !important;
+  background-position: 100% 100% !important;
 }
 
 .banana-item .emoji {
