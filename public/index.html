@@ -3,35 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Banana Collector</title>
+  <title>🍌 EPIC Banana Collector 🍌</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Banana Collector</h1>
-  <p>Click the banana to collect. Rare bananas have hats!</p>
-  <label>
-    Name:
-    <input id="username" placeholder="Enter your name">
-  </label>
-  <label>
-    PIN:
-    <input id="pin" placeholder="7-digit PIN (leave blank for new)">
-  </label>
-  <button id="set-credentials">Save Name/PIN</button>
-  <button id="save-score">Submit Score</button>
-  <div>Current Score: <span id="score">0</span></div>
-  <button id="leaderboard-toggle">Show Leaderboard</button>
+  <!-- EPIC BACKGROUND EFFECTS -->
+  <div class="floating-shape"></div>
+  <div class="floating-shape"></div>
+  <div class="floating-shape"></div>
+  
+  <div class="nebula-cloud"></div>
+  <div class="nebula-cloud"></div>
+  <div class="nebula-cloud"></div>
+  
+  <div class="matrix-rain" id="matrix-rain"></div>
+  
+  <!-- FLYING BANANAS -->
+  <div id="flying-bananas"></div>
+  
+  <!-- MAIN GAME CONTENT -->
+  <h1 id="main-title">🍌 EPIC BANANA COLLECTOR 🍌</h1>
+  <p id="subtitle">Click the banana to collect. Rare bananas have hats!</p>
+  
+  <div class="controls-panel">
+    <label>
+      🎮 Name:
+      <input id="username" placeholder="Enter your epic name">
+    </label>
+    <label>
+      🔐 PIN:
+      <input id="pin" placeholder="7-digit PIN (leave blank for new)">
+    </label>
+    <button id="set-credentials" class="epic-button">💾 Save Name/PIN</button>
+    <button id="save-score" class="epic-button">🚀 Submit Score</button>
+  </div>
+  
+  <div class="score-display">
+    <span class="score-label">🏆 Current Score: </span>
+    <span id="score">0</span>
+  </div>
+  
+  <button id="leaderboard-toggle" class="epic-button">🏅 Show Leaderboard</button>
+  
   <div id="leaderboard-area" style="display:none;">
-    <h2>Global Leaderboard</h2>
+    <h2>🏅 Global Leaderboard</h2>
     <ol id="leaderboard"></ol>
   </div>
-  <div id="banana">🍌</div>
+  
+  <!-- THE EPIC BANANA -->
+  <div id="banana-container">
+    <div id="banana">🍌</div>
+  </div>
+  
   <div id="inventory"></div>
-  <button id="collection-toggle">Show Collection</button>
+  
+  <button id="collection-toggle" class="epic-button">📚 Show Collection</button>
+  
   <div id="collection-area" style="display:none;">
-    <h2>Your Collection</h2>
+    <h2>📚 Your Epic Collection</h2>
     <div id="collection"></div>
   </div>
+  
+  <!-- ACHIEVEMENT POPUP -->
+  <div id="achievement-popup" class="achievement-popup">
+    <div class="achievement-content">
+      <div class="achievement-icon">🏆</div>
+      <div class="achievement-text">
+        <div class="achievement-title">EPIC ACHIEVEMENT!</div>
+        <div class="achievement-description"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- COMBO DISPLAY -->
+  <div id="combo-display" class="combo-display">
+    <div class="combo-text">COMBO!</div>
+    <div class="combo-multiplier">x1</div>
+  </div>
+  
   <script src="game.js"></script>
 </body>
 </html>
