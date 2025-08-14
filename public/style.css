@@ -228,6 +228,7 @@ button:disabled {
 
 /* Special styling for rare banana items */
 .banana-item:has(button) {
+  flex: 0 1 180px;
   border-color: #feca57;
   background: rgba(254, 202, 87, 0.1);
   animation: rarePulse 3s ease-in-out infinite;
