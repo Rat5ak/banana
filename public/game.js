@@ -71,7 +71,7 @@ function updateInventory() {
     div.innerHTML = `<div class="emoji">${b.emoji}</div><div>${b.type}</div>`;
     if (b.rare) {
       const btn = document.createElement('button');
-      btn.textContent = b.added ? 'Added' : 'Add to Collection';
+      btn.textContent = b.added ? 'Added' : 'Add';
       btn.disabled = b.added;
       btn.addEventListener('click', () => {
         if (b.added) return;
