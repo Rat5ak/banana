@@ -10,6 +10,11 @@ body {
   padding: 20px;
   overflow-x: hidden;
   position: relative;
+  /* Enable hardware acceleration for smoother performance */
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 /* EPIC BACKGROUND SYSTEM */
@@ -26,8 +31,12 @@ body::before {
     radial-gradient(circle at 40% 80%, rgba(119, 198, 255, 0.4) 0%, transparent 60%),
     radial-gradient(circle at 60% 30%, rgba(255, 215, 0, 0.3) 0%, transparent 50%),
     radial-gradient(circle at 10% 90%, rgba(0, 255, 127, 0.3) 0%, transparent 50%);
-  animation: backgroundShift 15s ease-in-out infinite;
+  animation: backgroundShift 15s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   z-index: -3;
+  /* Hardware acceleration */
+  will-change: transform;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 /* STARFIELD BACKGROUND */
@@ -48,6 +57,10 @@ body::after {
   background-size: 200px 100px;
   animation: starfield 200s linear infinite;
   z-index: -2;
+  /* Hardware acceleration */
+  will-change: transform;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 /* FLOATING GEOMETRIC SHAPES */
@@ -55,7 +68,13 @@ body::after {
   position: fixed;
   pointer-events: none;
   opacity: 0.1;
-  animation: floatShape 20s linear infinite;
+  animation: floatShape 20s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  /* Hardware acceleration */
+  will-change: transform, opacity;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .floating-shape:nth-child(1) {
@@ -233,6 +252,9 @@ body::after {
   text-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
   margin-bottom: 20px;
   position: relative;
+  /* Enhanced glow effect */
+  filter: drop-shadow(0 0 20px rgba(255, 107, 107, 0.4)) 
+          drop-shadow(0 0 30px rgba(78, 205, 196, 0.3));
 }
 
 #main-title::before {
@@ -248,7 +270,11 @@ body::after {
   z-index: -1;
   border-radius: 20px;
   filter: blur(20px);
-  opacity: 0.3;
+  opacity: 0.4;
+  /* Hardware acceleration */
+  will-change: transform, opacity;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 #subtitle {
@@ -257,17 +283,33 @@ body::after {
   margin-bottom: 40px;
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
   animation: subtitleGlow 3s ease-in-out infinite alternate;
+  /* Enhanced visual appeal */
+  filter: drop-shadow(0 0 10px rgba(160, 160, 160, 0.3));
 }
 
 .controls-panel {
   background: rgba(0, 0, 0, 0.6);
+  /* Fallback for browsers that don't support backdrop-filter */
+  background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px); /* Safari support */
   border: 2px solid rgba(78, 205, 196, 0.4);
   border-radius: 25px;
   padding: 30px;
   margin: 20px auto;
   max-width: 600px;
   box-shadow: 0 10px 40px rgba(78, 205, 196, 0.2);
+  /* Hardware acceleration */
+  will-change: transform, box-shadow;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+/* Modern browsers with backdrop-filter support */
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .controls-panel {
+    background: rgba(0, 0, 0, 0.6);
+  }
 }
 
 .epic-button {
@@ -281,13 +323,19 @@ body::after {
   font-weight: 700;
   cursor: pointer;
   margin: 10px 8px;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.6, 1);
   box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
   text-transform: uppercase;
   letter-spacing: 2px;
   position: relative;
   overflow: hidden;
-  animation: buttonGradient 3s ease-in-out infinite;
+  animation: buttonGradient 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  /* Hardware acceleration */
+  will-change: transform, box-shadow, background-position;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .epic-button::before {
@@ -298,7 +346,11 @@ body::after {
   width: 100%;
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transition: left 0.5s;
+  transition: left 0.5s cubic-bezier(0.4, 0, 0.6, 1);
+  /* Hardware acceleration */
+  will-change: transform;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 .epic-button:hover::before {
@@ -306,15 +358,32 @@ body::after {
 }
 
 .epic-button:hover {
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.6);
+  -webkit-transform: translate3d(0, -5px, 0) scale3d(1.05, 1.05, 1);
+  transform: translate3d(0, -5px, 0) scale3d(1.05, 1.05, 1);
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.6), 
+              0 0 20px rgba(255, 107, 107, 0.4);
   background-position: 100% 100%;
+  /* Enhanced glow effect */
+  filter: brightness(1.1) saturate(1.2);
 }
 
 .score-display {
   font-size: 2rem;
   margin: 30px 0;
   text-align: center;
+  /* Enhanced glow and pulse effect */
+  animation: scorePulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes scorePulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(78, 205, 196, 0.4));
+  }
+  100% {
+    transform: scale(1.02);
+    filter: drop-shadow(0 0 20px rgba(78, 205, 196, 0.8));
+  }
 }
 
 .score-label {
@@ -341,13 +410,20 @@ body::after {
   padding: 30px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   z-index: 10000;
-  transition: all 0.5s ease;
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   border: 3px solid #fff;
+  /* Hardware acceleration */
+  will-change: transform, opacity;
+  -webkit-transform: translate3d(-50%, -50%, 0) scale3d(0, 0, 1);
+  transform: translate3d(-50%, -50%, 0) scale3d(0, 0, 1);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .achievement-popup.show {
-  transform: translate(-50%, -50%) scale(1);
-  animation: achievementBounce 0.8s ease-out;
+  -webkit-transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
+  transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
+  animation: achievementBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .achievement-content {
@@ -360,7 +436,11 @@ body::after {
 
 .achievement-icon {
   font-size: 3rem;
-  animation: achievementSpin 2s ease-in-out infinite;
+  animation: achievementSpin 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  /* Hardware acceleration */
+  will-change: transform;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 .achievement-title {
@@ -388,13 +468,20 @@ body::after {
   text-align: center;
   box-shadow: 0 10px 30px rgba(254, 202, 87, 0.4);
   z-index: 5000;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   border: 2px solid #fff;
+  /* Hardware acceleration */
+  will-change: transform;
+  -webkit-transform: translate3d(0, -50%, 0) scale3d(0, 0, 1);
+  transform: translate3d(0, -50%, 0) scale3d(0, 0, 1);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .combo-display.show {
-  transform: translateY(-50%) scale(1);
-  animation: comboPulse 1s ease-in-out infinite;
+  -webkit-transform: translate3d(0, -50%, 0) scale3d(1, 1, 1);
+  transform: translate3d(0, -50%, 0) scale3d(1, 1, 1);
+  animation: comboPulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .combo-text {
@@ -454,13 +541,41 @@ body::after {
 }
 
 @keyframes achievementSpin {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(1.2); }
+  0%, 100% { 
+    -webkit-transform: rotateZ(0deg) scale3d(1, 1, 1); 
+    transform: rotateZ(0deg) scale3d(1, 1, 1); 
+  }
+  25% {
+    -webkit-transform: rotateZ(90deg) scale3d(1.1, 1.1, 1);
+    transform: rotateZ(90deg) scale3d(1.1, 1.1, 1);
+  }
+  50% { 
+    -webkit-transform: rotateZ(180deg) scale3d(1.2, 1.2, 1); 
+    transform: rotateZ(180deg) scale3d(1.2, 1.2, 1); 
+  }
+  75% {
+    -webkit-transform: rotateZ(270deg) scale3d(1.1, 1.1, 1);
+    transform: rotateZ(270deg) scale3d(1.1, 1.1, 1);
+  }
 }
 
 @keyframes comboPulse {
-  0%, 100% { transform: translateY(-50%) scale(1); }
-  50% { transform: translateY(-50%) scale(1.1); }
+  0%, 100% { 
+    -webkit-transform: translate3d(0, -50%, 0) scale3d(1, 1, 1); 
+    transform: translate3d(0, -50%, 0) scale3d(1, 1, 1); 
+  }
+  25% {
+    -webkit-transform: translate3d(0, -50%, 0) scale3d(1.05, 1.05, 1);
+    transform: translate3d(0, -50%, 0) scale3d(1.05, 1.05, 1);
+  }
+  50% { 
+    -webkit-transform: translate3d(0, -50%, 0) scale3d(1.1, 1.1, 1); 
+    transform: translate3d(0, -50%, 0) scale3d(1.1, 1.1, 1); 
+  }
+  75% {
+    -webkit-transform: translate3d(0, -50%, 0) scale3d(1.05, 1.05, 1);
+    transform: translate3d(0, -50%, 0) scale3d(1.05, 1.05, 1);
+  }
 }
 
 @keyframes flyAcross {
@@ -516,15 +631,21 @@ input {
   color: #fff;
   font-size: 1rem;
   margin-left: 10px;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.6, 1);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
+  /* Hardware acceleration */
+  will-change: transform, box-shadow, border-color;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 input:focus {
   outline: none;
   border-color: #ff6b6b;
   box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
-  transform: scale(1.05);
+  -webkit-transform: scale3d(1.05, 1.05, 1);
+  transform: scale3d(1.05, 1.05, 1);
 }
 
 input::placeholder {
@@ -567,12 +688,21 @@ button:disabled {
 #banana {
   font-size: 6rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.6, 1);
   display: inline-block;
   filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
-  animation: float 3s ease-in-out infinite;
+  animation: float 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   position: relative;
   z-index: 10;
+  /* Hardware acceleration for smoother performance */
+  will-change: transform, filter;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  /* Better transform origin for scaling */
+  -webkit-transform-origin: center center;
+  transform-origin: center center;
 }
 
 /* EPIC BANANA GLOW RINGS */
@@ -586,8 +716,12 @@ button:disabled {
   border: 3px solid rgba(255, 235, 59, 0.3);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  animation: pulseRing 2s ease-in-out infinite;
+  animation: pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   z-index: -1;
+  /* Hardware acceleration */
+  will-change: transform, opacity;
+  -webkit-transform: translate3d(-50%, -50%, 0);
+  transform: translate3d(-50%, -50%, 0);
 }
 
 #banana::after {
@@ -600,64 +734,159 @@ button:disabled {
   border: 2px solid rgba(255, 235, 59, 0.2);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  animation: pulseRing 2s ease-in-out infinite reverse;
+  animation: pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite reverse;
   z-index: -1;
+  /* Hardware acceleration */
+  will-change: transform, opacity;
+  -webkit-transform: translate3d(-50%, -50%, 0);
+  transform: translate3d(-50%, -50%, 0);
 }
 
-/* SCREEN SHAKE EFFECT */
+/* ENHANCED SCREEN EFFECTS */
 .screen-shake {
-  animation: screenShake 0.5s ease-in-out;
+  animation: screenShake 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.screen-glow {
+  animation: screenGlow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 @keyframes screenShake {
-  0%, 100% { transform: translateX(0); }
-  10% { transform: translateX(-10px); }
-  20% { transform: translateX(10px); }
-  30% { transform: translateX(-8px); }
-  40% { transform: translateX(8px); }
-  50% { transform: translateX(-6px); }
-  60% { transform: translateX(6px); }
-  70% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
-  90% { transform: translateX(-2px); }
+  0%, 100% { 
+    -webkit-transform: translate3d(0, 0, 0); 
+    transform: translate3d(0, 0, 0); 
+  }
+  10% { 
+    -webkit-transform: translate3d(-10px, 0, 0); 
+    transform: translate3d(-10px, 0, 0); 
+  }
+  20% { 
+    -webkit-transform: translate3d(10px, 0, 0); 
+    transform: translate3d(10px, 0, 0); 
+  }
+  30% { 
+    -webkit-transform: translate3d(-8px, 0, 0); 
+    transform: translate3d(-8px, 0, 0); 
+  }
+  40% { 
+    -webkit-transform: translate3d(8px, 0, 0); 
+    transform: translate3d(8px, 0, 0); 
+  }
+  50% { 
+    -webkit-transform: translate3d(-6px, 0, 0); 
+    transform: translate3d(-6px, 0, 0); 
+  }
+  60% { 
+    -webkit-transform: translate3d(6px, 0, 0); 
+    transform: translate3d(6px, 0, 0); 
+  }
+  70% { 
+    -webkit-transform: translate3d(-4px, 0, 0); 
+    transform: translate3d(-4px, 0, 0); 
+  }
+  80% { 
+    -webkit-transform: translate3d(4px, 0, 0); 
+    transform: translate3d(4px, 0, 0); 
+  }
+  90% { 
+    -webkit-transform: translate3d(-2px, 0, 0); 
+    transform: translate3d(-2px, 0, 0); 
+  }
+}
+
+@keyframes screenGlow {
+  0%, 100% {
+    box-shadow: inset 0 0 0 rgba(255, 107, 107, 0);
+  }
+  25% {
+    box-shadow: inset 0 0 50px rgba(255, 107, 107, 0.2);
+  }
+  50% {
+    box-shadow: inset 0 0 80px rgba(255, 107, 107, 0.4);
+  }
+  75% {
+    box-shadow: inset 0 0 50px rgba(255, 107, 107, 0.2);
+  }
 }
 
 @keyframes pulseRing {
   0% {
-    transform: translate(-50%, -50%) scale(0.8);
+    -webkit-transform: translate3d(-50%, -50%, 0) scale3d(0.8, 0.8, 1);
+    transform: translate3d(-50%, -50%, 0) scale3d(0.8, 0.8, 1);
     opacity: 1;
   }
+  25% {
+    -webkit-transform: translate3d(-50%, -50%, 0) scale3d(1.0, 1.0, 1);
+    transform: translate3d(-50%, -50%, 0) scale3d(1.0, 1.0, 1);
+    opacity: 0.8;
+  }
   50% {
-    transform: translate(-50%, -50%) scale(1.2);
+    -webkit-transform: translate3d(-50%, -50%, 0) scale3d(1.2, 1.2, 1);
+    transform: translate3d(-50%, -50%, 0) scale3d(1.2, 1.2, 1);
     opacity: 0.5;
   }
+  75% {
+    -webkit-transform: translate3d(-50%, -50%, 0) scale3d(1.4, 1.4, 1);
+    transform: translate3d(-50%, -50%, 0) scale3d(1.4, 1.4, 1);
+    opacity: 0.2;
+  }
   100% {
-    transform: translate(-50%, -50%) scale(1.5);
+    -webkit-transform: translate3d(-50%, -50%, 0) scale3d(1.5, 1.5, 1);
+    transform: translate3d(-50%, -50%, 0) scale3d(1.5, 1.5, 1);
     opacity: 0;
   }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%, 20%, 80%, 100% { 
+    -webkit-transform: translate3d(0, 0px, 0); 
+    transform: translate3d(0, 0px, 0); 
+  }
+  25%, 35% {
+    -webkit-transform: translate3d(0, -5px, 0);
+    transform: translate3d(0, -5px, 0);
+  }
+  45%, 55% { 
+    -webkit-transform: translate3d(0, -10px, 0); 
+    transform: translate3d(0, -10px, 0); 
+  }
+  65%, 75% {
+    -webkit-transform: translate3d(0, -5px, 0);
+    transform: translate3d(0, -5px, 0);
+  }
 }
 
 #banana:hover {
-  transform: scale(1.15) translateY(-8px) rotate(5deg);
+  -webkit-transform: scale3d(1.15, 1.15, 1) translate3d(0, -8px, 0) rotateZ(5deg);
+  transform: scale3d(1.15, 1.15, 1) translate3d(0, -8px, 0) rotateZ(5deg);
   filter: drop-shadow(0 0 40px rgba(255, 235, 59, 0.9)) drop-shadow(0 0 60px rgba(255, 235, 59, 0.6));
-  animation: epicBounce 0.4s ease-in-out infinite;
+  animation: epicBounce 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
 }
 
 @keyframes epicBounce {
-  0%, 100% { transform: scale(1.15) translateY(-8px) rotate(5deg); }
-  25% { transform: scale(1.2) translateY(-12px) rotate(-2deg); }
-  50% { transform: scale(1.18) translateY(-10px) rotate(3deg); }
-  75% { transform: scale(1.22) translateY(-14px) rotate(-1deg); }
+  0%, 100% { 
+    -webkit-transform: scale3d(1.15, 1.15, 1) translate3d(0, -8px, 0) rotateZ(5deg); 
+    transform: scale3d(1.15, 1.15, 1) translate3d(0, -8px, 0) rotateZ(5deg); 
+  }
+  25% { 
+    -webkit-transform: scale3d(1.2, 1.2, 1) translate3d(0, -12px, 0) rotateZ(-2deg); 
+    transform: scale3d(1.2, 1.2, 1) translate3d(0, -12px, 0) rotateZ(-2deg); 
+  }
+  50% { 
+    -webkit-transform: scale3d(1.18, 1.18, 1) translate3d(0, -10px, 0) rotateZ(3deg); 
+    transform: scale3d(1.18, 1.18, 1) translate3d(0, -10px, 0) rotateZ(3deg); 
+  }
+  75% { 
+    -webkit-transform: scale3d(1.22, 1.22, 1) translate3d(0, -14px, 0) rotateZ(-1deg); 
+    transform: scale3d(1.22, 1.22, 1) translate3d(0, -14px, 0) rotateZ(-1deg); 
+  }
 }
 
 #banana:active {
-  transform: scale(1.3) translateY(-12px) rotate(-10deg);
+  -webkit-transform: scale3d(1.3, 1.3, 1) translate3d(0, -12px, 0) rotateZ(-10deg);
+  transform: scale3d(1.3, 1.3, 1) translate3d(0, -12px, 0) rotateZ(-10deg);
   filter: drop-shadow(0 0 60px rgba(255, 235, 59, 1)) drop-shadow(0 0 100px rgba(255, 235, 59, 0.8));
+  transition: all 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 #inventory {
@@ -675,12 +904,19 @@ button:disabled {
   padding: 15px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
   border: 2px solid rgba(78, 205, 196, 0.3);
   border-radius: 20px;
   box-sizing: border-box;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.6, 1);
   position: relative;
   overflow: hidden;
+  /* Hardware acceleration */
+  will-change: transform, box-shadow, border-color;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .banana-item::before {
@@ -702,13 +938,34 @@ button:disabled {
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); opacity: 0; }
-  50% { opacity: 1; }
-  100% { transform: translateX(100%) translateY(100%) rotate(45deg); opacity: 0; }
+  0% { 
+    -webkit-transform: translate3d(-100%, -100%, 0) rotateZ(45deg); 
+    transform: translate3d(-100%, -100%, 0) rotateZ(45deg); 
+    opacity: 0; 
+  }
+  25% {
+    -webkit-transform: translate3d(-50%, -50%, 0) rotateZ(45deg);
+    transform: translate3d(-50%, -50%, 0) rotateZ(45deg);
+    opacity: 0.5;
+  }
+  50% { 
+    opacity: 1; 
+  }
+  75% {
+    -webkit-transform: translate3d(50%, 50%, 0) rotateZ(45deg);
+    transform: translate3d(50%, 50%, 0) rotateZ(45deg);
+    opacity: 0.5;
+  }
+  100% { 
+    -webkit-transform: translate3d(100%, 100%, 0) rotateZ(45deg); 
+    transform: translate3d(100%, 100%, 0) rotateZ(45deg); 
+    opacity: 0; 
+  }
 }
 
 .banana-item:hover {
-  transform: translateY(-5px) scale(1.05);
+  -webkit-transform: translate3d(0, -5px, 0) scale3d(1.05, 1.05, 1);
+  transform: translate3d(0, -5px, 0) scale3d(1.05, 1.05, 1);
   border-color: #4ecdc4;
   box-shadow: 0 10px 30px rgba(78, 205, 196, 0.3);
 }
@@ -893,40 +1150,6 @@ div:has(#score) {
 }
 
 /* Responsive design */
-@media (max-width: 600px) {
-  h1 {
-    font-size: 2.5rem;
-  }
-  
-  #banana {
-    font-size: 4rem;
-  }
-  
-  .banana-item {
-    flex-basis: 100px;
-    margin: 8px;
-    padding: 12px;
-  }
-  
-  #collection-area, #leaderboard-area {
-    position: relative;
-    top: auto;
-    left: auto;
-    right: auto;
-    margin: 20px auto;
-    max-width: 90%;
-  }
-  
-  input {
-    margin: 5px 0;
-    display: block;
-  }
-  
-  label {
-    margin: 10px 0 5px 0;
-  }
-}
-
 /* EPIC PARTICLE SYSTEM */
 .particle {
   position: absolute;
@@ -935,16 +1158,29 @@ div:has(#score) {
   background: #4ecdc4;
   border-radius: 50%;
   pointer-events: none;
-  animation: particle-float 3s ease-out forwards;
+  animation: particle-float 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   z-index: 1000;
+  /* Hardware acceleration */
+  will-change: transform, opacity;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .particle-star {
   width: 8px;
   height: 8px;
   background: radial-gradient(circle, #fff 0%, #ffeb3b 100%);
+  /* Fallback for browsers that don't support clip-path */
+  border-radius: 50%;
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  animation: particle-star 4s ease-out forwards;
+  -webkit-clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: particle-star 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  /* Hardware acceleration */
+  will-change: transform, opacity;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 .particle-sparkle {
@@ -1001,11 +1237,28 @@ div:has(#score) {
 @keyframes particle-float {
   0% {
     opacity: 1;
-    transform: translateY(0) scale(1) rotate(0deg);
+    -webkit-transform: translate3d(0, 0, 0) scale3d(1, 1, 1) rotateZ(0deg);
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1) rotateZ(0deg);
+  }
+  25% {
+    opacity: 0.9;
+    -webkit-transform: translate3d(0, -30px, 0) scale3d(1.1, 1.1, 1) rotateZ(45deg);
+    transform: translate3d(0, -30px, 0) scale3d(1.1, 1.1, 1) rotateZ(45deg);
+  }
+  50% {
+    opacity: 0.7;
+    -webkit-transform: translate3d(0, -60px, 0) scale3d(0.9, 0.9, 1) rotateZ(90deg);
+    transform: translate3d(0, -60px, 0) scale3d(0.9, 0.9, 1) rotateZ(90deg);
+  }
+  75% {
+    opacity: 0.4;
+    -webkit-transform: translate3d(0, -90px, 0) scale3d(0.7, 0.7, 1) rotateZ(135deg);
+    transform: translate3d(0, -90px, 0) scale3d(0.7, 0.7, 1) rotateZ(135deg);
   }
   100% {
     opacity: 0;
-    transform: translateY(-120px) scale(0.5) rotate(180deg);
+    -webkit-transform: translate3d(0, -120px, 0) scale3d(0.5, 0.5, 1) rotateZ(180deg);
+    transform: translate3d(0, -120px, 0) scale3d(0.5, 0.5, 1) rotateZ(180deg);
   }
 }
 
@@ -1307,16 +1560,53 @@ div:has(#score) {
 }
 
 /* ENHANCED RESPONSIVE DESIGN */
+
+/* Extra large screens */
+@media (min-width: 1200px) {
+  .controls-panel {
+    max-width: 700px;
+  }
+  
+  #main-title {
+    font-size: 5rem;
+  }
+  
+  #banana {
+    font-size: 7rem;
+  }
+}
+
+/* Large tablets and small desktops */
+@media (max-width: 1024px) {
+  #main-title {
+    font-size: 3.5rem;
+  }
+  
+  .controls-panel {
+    max-width: 80%;
+    padding: 25px;
+  }
+  
+  .banana-item {
+    flex-basis: 130px;
+  }
+}
+
+/* Standard tablets */
 @media (max-width: 800px) {
   .controls-panel {
     padding: 20px;
     margin: 10px;
+    max-width: 90%;
   }
   
   .epic-button {
     font-size: 1rem;
     padding: 12px 20px;
     margin: 8px 5px;
+    /* Ensure buttons are touch-friendly */
+    min-height: 44px;
+    min-width: 44px;
   }
   
   .banana-item {
@@ -1327,31 +1617,76 @@ div:has(#score) {
   
   #main-title {
     font-size: 3rem;
+    padding: 0 15px;
   }
   
   #subtitle {
     font-size: 1.2rem;
+    padding: 0 15px;
   }
   
   .game-over-content {
     margin: 20px;
     padding: 30px;
   }
+  
+  #collection-area, #leaderboard-area {
+    max-width: 95%;
+    margin: 15px auto;
+  }
+  
+  .combo-display {
+    right: 15px;
+    top: 25%;
+    padding: 15px;
+  }
 }
 
+/* Mobile phones */
 @media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+  
   #main-title {
     font-size: 2.5rem;
+    margin-bottom: 15px;
+    line-height: 1.2;
+  }
+  
+  #subtitle {
+    font-size: 1rem;
+    margin-bottom: 25px;
   }
   
   #banana {
     font-size: 4rem;
+    /* Ensure banana is easily tappable on mobile */
+    padding: 10px;
+    margin: 15px 0;
+  }
+  
+  .controls-panel {
+    padding: 15px;
+    margin: 10px 5px;
+    border-radius: 15px;
+  }
+  
+  .epic-button {
+    font-size: 0.9rem;
+    padding: 12px 20px;
+    /* Full width buttons on small screens */
+    width: 100%;
+    max-width: 200px;
+    margin: 8px auto;
+    display: block;
   }
   
   .banana-item {
     flex-basis: 100px;
-    margin: 8px;
-    padding: 12px;
+    margin: 6px;
+    padding: 10px;
+    font-size: 0.9rem;
   }
   
   #collection-area, #leaderboard-area {
@@ -1359,43 +1694,92 @@ div:has(#score) {
     top: auto;
     left: auto;
     right: auto;
-    margin: 20px auto;
-    max-width: 90%;
-  }
-  
-  .controls-panel {
+    margin: 15px auto;
+    max-width: 95%;
     padding: 15px;
   }
   
-  .epic-button {
-    font-size: 0.9rem;
-    padding: 10px 18px;
-  }
-  
   input {
-    margin: 5px 0;
+    margin: 8px 0;
     display: block;
     width: 100%;
     box-sizing: border-box;
+    padding: 12px 15px;
+    font-size: 16px; /* Prevent zoom on iOS */
+    border-radius: 8px;
   }
   
   label {
-    margin: 10px 0 5px 0;
+    margin: 15px 0 8px 0;
     text-align: left;
+    display: block;
+    width: 100%;
   }
   
   .combo-display {
     right: 10px;
+    top: 20%;
+    padding: 12px;
+    font-size: 0.9rem;
   }
   
   .achievement-popup {
-    margin: 20px;
+    margin: 15px;
     padding: 20px;
+    border-radius: 15px;
+    max-width: calc(100vw - 30px);
   }
   
   .achievement-content {
     flex-direction: column;
     text-align: center;
-    gap: 15px;
+    gap: 12px;
+  }
+  
+  .achievement-icon {
+    font-size: 2.5rem;
+  }
+  
+  .achievement-title {
+    font-size: 1.3rem;
+  }
+  
+  /* Improve inventory layout on mobile */
+  #inventory {
+    gap: 10px;
+    padding: 15px;
+  }
+  
+  /* Better score display on mobile */
+  .score-display {
+    font-size: 1.5rem;
+    margin: 20px 0;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  #main-title {
+    font-size: 2rem;
+  }
+  
+  #banana {
+    font-size: 3.5rem;
+  }
+  
+  .controls-panel {
+    padding: 12px;
+  }
+  
+  .banana-item {
+    flex-basis: 80px;
+    margin: 4px;
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+  
+  .epic-button {
+    font-size: 0.8rem;
+    padding: 10px 16px;
   }
 }
