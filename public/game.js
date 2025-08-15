@@ -169,26 +169,7 @@ function loadSavedData() {
   }
 }
 
-toggleBtn.addEventListener('click', () => {
-  if (collectionAreaEl.style.display === 'none') {
-    collectionAreaEl.style.display = 'block';
-    toggleBtn.textContent = 'Hide Collection';
-  } else {
-    collectionAreaEl.style.display = 'none';
-    toggleBtn.textContent = 'Show Collection';
-  }
-});
 
-leaderboardToggleBtn.addEventListener('click', () => {
-  if (leaderboardAreaEl.style.display === 'none') {
-    leaderboardAreaEl.style.display = 'block';
-    leaderboardToggleBtn.textContent = 'Hide Leaderboard';
-    updateLeaderboard();
-  } else {
-    leaderboardAreaEl.style.display = 'none';
-    leaderboardToggleBtn.textContent = 'Show Leaderboard';
-  }
-});
 
 // EPIC RANDOM BANANA FUNCTION
 function randomBanana() {
