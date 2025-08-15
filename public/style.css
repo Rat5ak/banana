@@ -252,6 +252,9 @@ body::after {
   text-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
   margin-bottom: 20px;
   position: relative;
+  /* Enhanced glow effect */
+  filter: drop-shadow(0 0 20px rgba(255, 107, 107, 0.4)) 
+          drop-shadow(0 0 30px rgba(78, 205, 196, 0.3));
 }
 
 #main-title::before {
@@ -267,7 +270,11 @@ body::after {
   z-index: -1;
   border-radius: 20px;
   filter: blur(20px);
-  opacity: 0.3;
+  opacity: 0.4;
+  /* Hardware acceleration */
+  will-change: transform, opacity;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 
 #subtitle {
@@ -276,6 +283,8 @@ body::after {
   margin-bottom: 40px;
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
   animation: subtitleGlow 3s ease-in-out infinite alternate;
+  /* Enhanced visual appeal */
+  filter: drop-shadow(0 0 10px rgba(160, 160, 160, 0.3));
 }
 
 .controls-panel {
@@ -351,14 +360,30 @@ body::after {
 .epic-button:hover {
   -webkit-transform: translate3d(0, -5px, 0) scale3d(1.05, 1.05, 1);
   transform: translate3d(0, -5px, 0) scale3d(1.05, 1.05, 1);
-  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.6);
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.6), 
+              0 0 20px rgba(255, 107, 107, 0.4);
   background-position: 100% 100%;
+  /* Enhanced glow effect */
+  filter: brightness(1.1) saturate(1.2);
 }
 
 .score-display {
   font-size: 2rem;
   margin: 30px 0;
   text-align: center;
+  /* Enhanced glow and pulse effect */
+  animation: scorePulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes scorePulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(78, 205, 196, 0.4));
+  }
+  100% {
+    transform: scale(1.02);
+    filter: drop-shadow(0 0 20px rgba(78, 205, 196, 0.8));
+  }
 }
 
 .score-label {
@@ -717,22 +742,71 @@ button:disabled {
   transform: translate3d(-50%, -50%, 0);
 }
 
-/* SCREEN SHAKE EFFECT */
+/* ENHANCED SCREEN EFFECTS */
 .screen-shake {
-  animation: screenShake 0.5s ease-in-out;
+  animation: screenShake 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.screen-glow {
+  animation: screenGlow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 @keyframes screenShake {
-  0%, 100% { transform: translateX(0); }
-  10% { transform: translateX(-10px); }
-  20% { transform: translateX(10px); }
-  30% { transform: translateX(-8px); }
-  40% { transform: translateX(8px); }
-  50% { transform: translateX(-6px); }
-  60% { transform: translateX(6px); }
-  70% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
-  90% { transform: translateX(-2px); }
+  0%, 100% { 
+    -webkit-transform: translate3d(0, 0, 0); 
+    transform: translate3d(0, 0, 0); 
+  }
+  10% { 
+    -webkit-transform: translate3d(-10px, 0, 0); 
+    transform: translate3d(-10px, 0, 0); 
+  }
+  20% { 
+    -webkit-transform: translate3d(10px, 0, 0); 
+    transform: translate3d(10px, 0, 0); 
+  }
+  30% { 
+    -webkit-transform: translate3d(-8px, 0, 0); 
+    transform: translate3d(-8px, 0, 0); 
+  }
+  40% { 
+    -webkit-transform: translate3d(8px, 0, 0); 
+    transform: translate3d(8px, 0, 0); 
+  }
+  50% { 
+    -webkit-transform: translate3d(-6px, 0, 0); 
+    transform: translate3d(-6px, 0, 0); 
+  }
+  60% { 
+    -webkit-transform: translate3d(6px, 0, 0); 
+    transform: translate3d(6px, 0, 0); 
+  }
+  70% { 
+    -webkit-transform: translate3d(-4px, 0, 0); 
+    transform: translate3d(-4px, 0, 0); 
+  }
+  80% { 
+    -webkit-transform: translate3d(4px, 0, 0); 
+    transform: translate3d(4px, 0, 0); 
+  }
+  90% { 
+    -webkit-transform: translate3d(-2px, 0, 0); 
+    transform: translate3d(-2px, 0, 0); 
+  }
+}
+
+@keyframes screenGlow {
+  0%, 100% {
+    box-shadow: inset 0 0 0 rgba(255, 107, 107, 0);
+  }
+  25% {
+    box-shadow: inset 0 0 50px rgba(255, 107, 107, 0.2);
+  }
+  50% {
+    box-shadow: inset 0 0 80px rgba(255, 107, 107, 0.4);
+  }
+  75% {
+    box-shadow: inset 0 0 50px rgba(255, 107, 107, 0.2);
+  }
 }
 
 @keyframes pulseRing {
@@ -1076,40 +1150,6 @@ div:has(#score) {
 }
 
 /* Responsive design */
-@media (max-width: 600px) {
-  h1 {
-    font-size: 2.5rem;
-  }
-  
-  #banana {
-    font-size: 4rem;
-  }
-  
-  .banana-item {
-    flex-basis: 100px;
-    margin: 8px;
-    padding: 12px;
-  }
-  
-  #collection-area, #leaderboard-area {
-    position: relative;
-    top: auto;
-    left: auto;
-    right: auto;
-    margin: 20px auto;
-    max-width: 90%;
-  }
-  
-  input {
-    margin: 5px 0;
-    display: block;
-  }
-  
-  label {
-    margin: 10px 0 5px 0;
-  }
-}
-
 /* EPIC PARTICLE SYSTEM */
 .particle {
   position: absolute;
@@ -1520,16 +1560,53 @@ div:has(#score) {
 }
 
 /* ENHANCED RESPONSIVE DESIGN */
+
+/* Extra large screens */
+@media (min-width: 1200px) {
+  .controls-panel {
+    max-width: 700px;
+  }
+  
+  #main-title {
+    font-size: 5rem;
+  }
+  
+  #banana {
+    font-size: 7rem;
+  }
+}
+
+/* Large tablets and small desktops */
+@media (max-width: 1024px) {
+  #main-title {
+    font-size: 3.5rem;
+  }
+  
+  .controls-panel {
+    max-width: 80%;
+    padding: 25px;
+  }
+  
+  .banana-item {
+    flex-basis: 130px;
+  }
+}
+
+/* Standard tablets */
 @media (max-width: 800px) {
   .controls-panel {
     padding: 20px;
     margin: 10px;
+    max-width: 90%;
   }
   
   .epic-button {
     font-size: 1rem;
     padding: 12px 20px;
     margin: 8px 5px;
+    /* Ensure buttons are touch-friendly */
+    min-height: 44px;
+    min-width: 44px;
   }
   
   .banana-item {
@@ -1540,31 +1617,76 @@ div:has(#score) {
   
   #main-title {
     font-size: 3rem;
+    padding: 0 15px;
   }
   
   #subtitle {
     font-size: 1.2rem;
+    padding: 0 15px;
   }
   
   .game-over-content {
     margin: 20px;
     padding: 30px;
   }
+  
+  #collection-area, #leaderboard-area {
+    max-width: 95%;
+    margin: 15px auto;
+  }
+  
+  .combo-display {
+    right: 15px;
+    top: 25%;
+    padding: 15px;
+  }
 }
 
+/* Mobile phones */
 @media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+  
   #main-title {
     font-size: 2.5rem;
+    margin-bottom: 15px;
+    line-height: 1.2;
+  }
+  
+  #subtitle {
+    font-size: 1rem;
+    margin-bottom: 25px;
   }
   
   #banana {
     font-size: 4rem;
+    /* Ensure banana is easily tappable on mobile */
+    padding: 10px;
+    margin: 15px 0;
+  }
+  
+  .controls-panel {
+    padding: 15px;
+    margin: 10px 5px;
+    border-radius: 15px;
+  }
+  
+  .epic-button {
+    font-size: 0.9rem;
+    padding: 12px 20px;
+    /* Full width buttons on small screens */
+    width: 100%;
+    max-width: 200px;
+    margin: 8px auto;
+    display: block;
   }
   
   .banana-item {
     flex-basis: 100px;
-    margin: 8px;
-    padding: 12px;
+    margin: 6px;
+    padding: 10px;
+    font-size: 0.9rem;
   }
   
   #collection-area, #leaderboard-area {
@@ -1572,43 +1694,92 @@ div:has(#score) {
     top: auto;
     left: auto;
     right: auto;
-    margin: 20px auto;
-    max-width: 90%;
-  }
-  
-  .controls-panel {
+    margin: 15px auto;
+    max-width: 95%;
     padding: 15px;
   }
   
-  .epic-button {
-    font-size: 0.9rem;
-    padding: 10px 18px;
-  }
-  
   input {
-    margin: 5px 0;
+    margin: 8px 0;
     display: block;
     width: 100%;
     box-sizing: border-box;
+    padding: 12px 15px;
+    font-size: 16px; /* Prevent zoom on iOS */
+    border-radius: 8px;
   }
   
   label {
-    margin: 10px 0 5px 0;
+    margin: 15px 0 8px 0;
     text-align: left;
+    display: block;
+    width: 100%;
   }
   
   .combo-display {
     right: 10px;
+    top: 20%;
+    padding: 12px;
+    font-size: 0.9rem;
   }
   
   .achievement-popup {
-    margin: 20px;
+    margin: 15px;
     padding: 20px;
+    border-radius: 15px;
+    max-width: calc(100vw - 30px);
   }
   
   .achievement-content {
     flex-direction: column;
     text-align: center;
-    gap: 15px;
+    gap: 12px;
+  }
+  
+  .achievement-icon {
+    font-size: 2.5rem;
+  }
+  
+  .achievement-title {
+    font-size: 1.3rem;
+  }
+  
+  /* Improve inventory layout on mobile */
+  #inventory {
+    gap: 10px;
+    padding: 15px;
+  }
+  
+  /* Better score display on mobile */
+  .score-display {
+    font-size: 1.5rem;
+    margin: 20px 0;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  #main-title {
+    font-size: 2rem;
+  }
+  
+  #banana {
+    font-size: 3.5rem;
+  }
+  
+  .controls-panel {
+    padding: 12px;
+  }
+  
+  .banana-item {
+    flex-basis: 80px;
+    margin: 4px;
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+  
+  .epic-button {
+    font-size: 0.8rem;
+    padding: 10px 16px;
   }
 }
