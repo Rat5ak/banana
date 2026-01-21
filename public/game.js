@@ -134,7 +134,7 @@ generateNameBtn?.addEventListener('click', () => {
   // If they already have a PIN saved, warn them
   const hasSavedPin = localStorage.getItem('pin');
   if (hasSavedPin) {
-    if (!confirm('Getting a new name will reset your PIN and you won\\'t be able to update your old score. Continue?')) {
+    if (!confirm("Getting a new name will reset your PIN and you won't be able to update your old score. Continue?")) {
       return;
     }
   }
