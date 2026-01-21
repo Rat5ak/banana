@@ -15,21 +15,19 @@ Click the banana to collect. Some bananas are rare and wear fancy hats! Build yo
 
 ## 🏆 Leaderboard & Accounts
 
-### New Players
-1. Open the 🎮 Player panel (left side on desktop, bottom-left button on mobile)
-2. Click **✨ New Player** tab
-3. A random username is generated for you (click 🎲 to get a new one)
-4. Click **💾 Save** - a secret PIN will be generated
-5. **⚠️ WRITE DOWN YOUR PIN!** You need it to log back in later
-6. Click **🚀 Submit Score** to save your score to the global leaderboard
+### First Time Playing
+1. Open the 👤 Player drawer (left side)
+2. A random username is auto-generated (click 🎲 for a new one)
+3. Click **Submit Score** to save to the global leaderboard
+4. **⚠️ A PIN will appear - SAVE IT!** You need it to update your score on a new device
 
-### Returning Players
-1. Open the 🎮 Player panel
-2. Click **🔑 Returning** tab  
-3. Enter your **exact username** (case-insensitive)
-4. Enter your **PIN**
-5. Click **💾 Save** to verify and log back in
-6. Your score is now linked - submit new high scores anytime!
+### Returning (Same Device)
+Just click **Submit Score** - your PIN is saved locally!
+
+### Returning (New Device)
+1. Click "Returning on a new device?"
+2. Enter your PIN
+3. Submit - you're linked again!
 
 ## 🍌 Banana Rarity
 
@@ -102,8 +100,8 @@ python -m http.server 8080 --directory public
 banana/
 ├── public/
 │   ├── index.html         # Main game HTML
-│   ├── style.css          # All styles (~2400 lines of glory)
-│   ├── game.js            # Game logic & UI (~990 lines)
+│   ├── style.css          # All styles (~950 lines)
+│   ├── game.js            # Game logic & UI (~1170 lines)
 │   ├── jsonbin-config.js  # Leaderboard API wrapper
 │   └── manifest.json      # PWA manifest
 ├── functions/             # Cloudflare Pages serverless functions
@@ -118,12 +116,15 @@ banana/
 - ✨ Particle effects on banana clicks
 - 🌟 Achievement popup system
 - 🔥 Combo multiplier with visual feedback
-- 🎵 Sound effects (generated via Web Audio API)
+- 🎵 Sound effects (Web Audio API)
+- 📳 Haptic feedback on mobile
+- 🎯 Tap-to-add rare bananas to collection
+- ✨ Fly-to-drawer animation for collection
 - 💾 Auto-saves collection to localStorage
 - 📊 Global leaderboard via JSONBin.io
-- 🎲 Random username generator for privacy
-- 📱 Fully responsive mobile-first design
-- 🌙 Epic dark theme with nebula backgrounds
+- 🎲 Auto-generated usernames for privacy
+- 📱 Mobile-first responsive design
+- 🌙 Dark theme with neon accents
 - ⚡ Hardware-accelerated animations
 
 ## 🚀 Deployment
