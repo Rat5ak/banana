@@ -22,8 +22,15 @@ const generateNameBtn = document.getElementById('generate-name');
 
 // Setup drawer toggles (buttons are now outside drawers)
 document.querySelectorAll('.drawer-toggle').forEach(btn => {
-  btn.addEventListener('click', (e) => {
+  const handleToggle = (e) => {
+    e.preventDefault();
     e.stopPropagation();
+    
+    // Resume audio context on any user interaction (mobile fix)
+    if (audioContext?.state === 'suspended') {
+      audioContext.resume();
+    }
+    
     const isLeft = btn.classList.contains('left-toggle');
     const drawer = isLeft ? leftDrawer : rightDrawer;
     
@@ -37,7 +44,14 @@ document.querySelectorAll('.drawer-toggle').forEach(btn => {
     
     // Update button states
     updateToggleVisibility();
-  });
+  };
+  
+  // Use both click and touchend for reliability
+  btn.addEventListener('click', handleToggle);
+  btn.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    handleToggle(e);
+  }, { passive: false });
 });
 
 // Helper to update toggle button visibility and backdrop
@@ -256,17 +270,26 @@ function createToneBuffer(frequency, duration, type = 'sine') {
 }
 
 function playSound(soundName) {
-  if (!sounds[soundName]) return;
+  if (!sounds[soundName] || !audioContext) return;
   
-  const source = audioContext.createBufferSource();
-  const gainNode = audioContext.createGain();
+  // Resume audio context if suspended (mobile browsers)
+  if (audioContext.state === 'suspended') {
+    audioContext.resume();
+  }
   
-  source.buffer = sounds[soundName];
-  source.connect(gainNode);
-  gainNode.connect(audioContext.destination);
-  
-  gainNode.gain.value = 0.1;
-  source.start();
+  try {
+    const source = audioContext.createBufferSource();
+    const gainNode = audioContext.createGain();
+    
+    source.buffer = sounds[soundName];
+    source.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    gainNode.gain.value = 0.15; // Slightly louder
+    source.start();
+  } catch (err) {
+    // Silently fail if audio not available
+  }
 }
 
 // MATRIX RAIN EFFECT
@@ -545,9 +568,35 @@ function showAchievementPopup(achievement) {
   
   popup.classList.add('show');
   
-  setTimeout(() => {
+  // Longer display for important messages
+  const duration = achievement.persistent ? 8000 : 4000;
+  
+  clearTimeout(showAchievementPopup.hideTimeout);
+  showAchievementPopup.hideTimeout = setTimeout(() => {
     popup.classList.remove('show');
-  }, 4000);
+  }, duration);
+}
+
+// Special PIN display that stays until dismissed
+function showPinModal(pin) {
+  // Remove existing modal if any
+  document.querySelector('.pin-modal')?.remove();
+  
+  const modal = document.createElement('div');
+  modal.className = 'pin-modal';
+  modal.innerHTML = `
+    <div class="pin-modal-content">
+      <div class="pin-modal-icon">🔐</div>
+      <h3>Your PIN</h3>
+      <p class="pin-display">${pin}</p>
+      <p class="pin-warning">⚠️ Write this down! You need it to update your score.</p>
+      <button class="pin-modal-btn" onclick="this.closest('.pin-modal').remove()">Got it!</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  
+  // Also save to localStorage
+  localStorage.setItem('pin', pin);
 }
 
 // COMBO SYSTEM
@@ -988,16 +1037,11 @@ leaderboardSearchInput?.addEventListener('input', (e) => {
 saveScoreBtn.addEventListener('click', async () => {
   let name = localStorage.getItem('username') || usernameInput.value.trim();
   if (!name) name = 'Anonymous Epic Player';
-  let pin = localStorage.getItem('pin') || pinInput.value.trim();
+  let pin = pinInput.value.trim() || localStorage.getItem('pin');
   
-  if (!pin) {
+  const isNewPin = !pin;
+  if (isNewPin) {
     pin = Math.floor(1000000 + Math.random() * 9000000).toString();
-    showAchievementPopup({
-      icon: '🔐',
-      name: 'PIN Generated!',
-      description: `Your new PIN is ${pin}. Keep it safe!`
-    });
-    localStorage.setItem('pin', pin);
     pinInput.value = pin;
   }
   
@@ -1016,25 +1060,40 @@ saveScoreBtn.addEventListener('click', async () => {
         showAchievementPopup({
           icon: '❌',
           name: 'Wrong PIN!',
-          description: 'That username is taken with a different PIN'
+          description: 'Enter your PIN or use a different name',
+          persistent: true
         });
+        // Clear invalid saved PIN
+        localStorage.removeItem('pin');
+        pinInput.value = '';
         updateLeaderboard();
         return;
       }
       
-      if (result.newHighscore) {
-        showAchievementPopup({
-          icon: '🚀',
-          name: 'NEW HIGH SCORE!',
-          description: `${score} pts saved to global leaderboard!`
-        });
+      // Show PIN modal for new users FIRST (before success message)
+      if (isNewPin) {
+        showPinModal(pin);
       } else {
-        showAchievementPopup({
-          icon: '✅',
-          name: 'Score Checked',
-          description: `Your best is still higher!`
-        });
+        localStorage.setItem('pin', pin);
       }
+      
+      // Then show success (will appear after they dismiss PIN modal)
+      setTimeout(() => {
+        if (result.newHighscore) {
+          showAchievementPopup({
+            icon: '🚀',
+            name: 'HIGH SCORE SAVED!',
+            description: `${score} pts on the global leaderboard!`
+          });
+        } else {
+          showAchievementPopup({
+            icon: '✅',
+            name: 'Score Checked',
+            description: `Your best is still higher!`
+          });
+        }
+      }, isNewPin ? 100 : 0);
+      
       updateLeaderboard();
       return;
     } catch (err) {
@@ -1043,10 +1102,13 @@ saveScoreBtn.addEventListener('click', async () => {
   }
 
   // Local only fallback
+  if (isNewPin) {
+    showPinModal(pin);
+  }
   showAchievementPopup({
     icon: '💾',
     name: 'Saved Locally',
-    description: `${score} pts saved! (Configure JSONBin for global)`
+    description: `${score} pts saved!`
   });
   updateLeaderboard();
 });
