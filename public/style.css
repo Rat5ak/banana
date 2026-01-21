@@ -829,15 +829,28 @@ input::placeholder {
   opacity: 1;
 }
 
-.pin-section {
+.returning-section {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 8px;
 }
 
-.pin-section.hidden {
+.returning-section.hidden,
+#new-player-section.hidden {
   display: none;
+}
+
+.btn-row {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-row .btn-secondary {
+  flex: 1;
+}
+
+.btn-row .btn-primary {
+  flex: 2;
 }
 
 .btn-secondary {

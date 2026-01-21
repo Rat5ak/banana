@@ -370,23 +370,84 @@ function loadSavedData() {
   updateCollection();
 }
 
-// PIN section toggle for returning users on new devices
-const pinSection = document.getElementById('pin-section');
+// Returning user section toggle
+const newPlayerSection = document.getElementById('new-player-section');
+const returningSection = document.getElementById('returning-section');
 const newDeviceBtn = document.getElementById('new-device-btn');
 const pinCancelBtn = document.getElementById('pin-cancel');
+const returningUsername = document.getElementById('returning-username');
+const returningSubmitBtn = document.getElementById('returning-submit');
 
 newDeviceBtn?.addEventListener('click', () => {
-  pinSection?.classList.remove('hidden');
+  newPlayerSection?.classList.add('hidden');
+  returningSection?.classList.remove('hidden');
   newDeviceBtn.style.display = 'none';
-  saveScoreBtn.style.display = 'none';
-  pinInput?.focus();
+  returningUsername?.focus();
 });
 
 pinCancelBtn?.addEventListener('click', () => {
-  pinSection?.classList.add('hidden');
+  returningSection?.classList.add('hidden');
+  newPlayerSection?.classList.remove('hidden');
   newDeviceBtn.style.display = '';
-  saveScoreBtn.style.display = '';
   pinInput.value = '';
+  if (returningUsername) returningUsername.value = '';
+});
+
+// Handle returning user login
+returningSubmitBtn?.addEventListener('click', async () => {
+  const name = returningUsername?.value.trim();
+  const pin = pinInput?.value.trim();
+  
+  if (!name || !pin) {
+    showAchievementPopup({
+      icon: '⚠️',
+      name: 'Missing Info',
+      description: 'Enter both username and PIN'
+    });
+    return;
+  }
+  
+  // Try to verify by submitting with score 0 (won't update if PIN matches)
+  if (window.BananaDB?.isConfigured?.()) {
+    try {
+      const result = await window.BananaDB.submitScore(name, pin, score);
+      
+      if (!result.success && result.error === 'wrong_pin') {
+        showAchievementPopup({
+          icon: '❌',
+          name: 'Wrong PIN!',
+          description: 'Check your username and PIN'
+        });
+        return;
+      }
+      
+      // Success! Save credentials
+      localStorage.setItem('username', name);
+      localStorage.setItem('pin', pin);
+      usernameInput.value = name;
+      
+      // Switch back to normal view
+      returningSection?.classList.add('hidden');
+      newPlayerSection?.classList.remove('hidden');
+      newDeviceBtn.style.display = 'none'; // Hide since they're logged in
+      pinInput.value = '';
+      if (returningUsername) returningUsername.value = '';
+      
+      showAchievementPopup({
+        icon: '✅',
+        name: 'Welcome back!',
+        description: `Logged in as ${name}`
+      });
+      
+      updateLeaderboard();
+    } catch (err) {
+      showAchievementPopup({
+        icon: '❌',
+        name: 'Error',
+        description: 'Could not verify - try again'
+      });
+    }
+  }
 });
 
 
@@ -1094,24 +1155,16 @@ saveScoreBtn.addEventListener('click', async () => {
         showAchievementPopup({
           icon: '❌',
           name: 'Name already taken!',
-          description: 'Enter your PIN or get a new name',
+          description: 'Use "Returning on new device?" to login',
           persistent: true
         });
-        // Show PIN section so they can enter it
-        pinSection?.classList.remove('hidden');
-        if (newDeviceBtn) newDeviceBtn.style.display = 'none';
-        saveScoreBtn.style.display = 'none';
-        pinInput?.focus();
         updateLeaderboard();
         return;
       }
       
-      // Success! Save PIN and hide PIN section
+      // Success! Save PIN
       localStorage.setItem('pin', pin);
-      pinSection?.classList.add('hidden');
-      if (newDeviceBtn) newDeviceBtn.style.display = 'none'; // Hide forever since they have a PIN now
-      saveScoreBtn.style.display = '';
-      pinInput.value = '';
+      if (newDeviceBtn) newDeviceBtn.style.display = 'none'; // Hide since they have a PIN now
       
       // Show PIN modal for new users FIRST (before success message)
       if (isNewPin) {
