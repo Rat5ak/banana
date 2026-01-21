@@ -20,6 +20,9 @@ const rightDrawer = document.getElementById('right-drawer');
 const drawerBackdrop = document.getElementById('drawer-backdrop');
 const generateNameBtn = document.getElementById('generate-name');
 
+// Track touch to prevent double-firing on touch devices
+let recentlyTouched = false;
+
 // Setup drawer toggles (buttons are now outside drawers)
 document.querySelectorAll('.drawer-toggle').forEach(btn => {
   const handleToggle = (e) => {
@@ -46,10 +49,19 @@ document.querySelectorAll('.drawer-toggle').forEach(btn => {
     updateToggleVisibility();
   };
   
-  // Use both click and touchend for reliability
-  btn.addEventListener('click', handleToggle);
+  // Click handler (for mouse/desktop)
+  btn.addEventListener('click', (e) => {
+    if (recentlyTouched) {
+      recentlyTouched = false;
+      return; // Skip - already handled by touchend
+    }
+    handleToggle(e);
+  });
+  
+  // Touch handler (for mobile)
   btn.addEventListener('touchend', (e) => {
-    e.preventDefault();
+    recentlyTouched = true;
+    setTimeout(() => recentlyTouched = false, 300);
     handleToggle(e);
   }, { passive: false });
 });
