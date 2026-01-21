@@ -131,6 +131,14 @@ tabReturn?.addEventListener('click', () => {
 
 // Generate random username button
 generateNameBtn?.addEventListener('click', () => {
+  // If they already have a PIN saved, warn them
+  const hasSavedPin = localStorage.getItem('pin');
+  if (hasSavedPin) {
+    if (!confirm('Getting a new name will reset your PIN and you won\\'t be able to update your old score. Continue?')) {
+      return;
+    }
+  }
+  
   const newName = window.BananaDB?.generateUsername?.() || generateLocalUsername();
   usernameInput.value = newName;
   localStorage.setItem('username', newName);
@@ -284,6 +292,7 @@ function initializeFlyingBananas() {
 }
 
 function createFlyingBanana() {
+  if (!flyingBananas) return; // Element doesn't exist in new layout
   const banana = document.createElement('div');
   banana.className = 'flying-banana';
   banana.textContent = '🍌';
@@ -306,8 +315,14 @@ function loadSavedData() {
     usernameInput.value = savedName;
   } else {
     // Auto-generate a fun username for new players
-    ensureUsername();
+    const newName = window.BananaDB?.generateUsername?.() || generateLocalUsername();
+    usernameInput.value = newName;
+    localStorage.setItem('username', newName);
   }
+  
+  // Make username read-only - users get what they get!
+  usernameInput.readOnly = true;
+  usernameInput.style.cursor = 'default';
   
   if (savedPin) {
     pinInput.value = savedPin;
@@ -569,7 +584,26 @@ function hideComboDisplay() {
   comboDisplay.classList.remove('show');
 }
 
+// Floating points animation
+function showFloatingPoints(x, y, points, isRare = false) {
+  const container = document.getElementById('points-display');
+  if (!container) return;
+  
+  const el = document.createElement('div');
+  el.className = `floating-points${isRare ? ' rare' : ''}`;
+  el.textContent = `+${points}`;
+  el.style.left = `${x}px`;
+  el.style.top = `${y}px`;
+  container.appendChild(el);
+  
+  setTimeout(() => el.remove(), 1000);
+}
 
+// Score bump animation
+function bumpScore() {
+  scoreEl.classList.add('bump');
+  setTimeout(() => scoreEl.classList.remove('bump'), 100);
+}
 
 // EPIC BANANA CLICK/TAP EVENT
 function handleBananaTap(e) {
@@ -595,6 +629,11 @@ function handleBananaTap(e) {
   
   // Update combo system
   updateCombo();
+  
+  // Show floating points
+  const points = (b.points || 1) * comboMultiplier;
+  showFloatingPoints(x, y - 40, points, b.rare);
+  bumpScore();
   
   // Play appropriate sound
   if (b.rare) {
@@ -754,22 +793,39 @@ function updateCollection() {
     totalPoints += (b.points || 1);
   });
   
-  Object.keys(counts).forEach(type => {
-    const info = counts[type];
+  // Sort by count (most collected first)
+  const sorted = Object.entries(counts).sort((a, b) => b[1].count - a[1].count);
+  
+  sorted.forEach(([type, info]) => {
     const div = document.createElement('div');
-    div.className = 'banana-item collection-item';
-    div.style.boxShadow = `0 0 15px ${getRarityColor(type)}`;
+    const rarity = getRarityClass(type);
+    div.className = `collection-item ${rarity}`;
     div.innerHTML = `
       <div class="emoji">${info.emoji}</div>
-      <div class="banana-name">${type}</div>
-      <div class="banana-count">x${info.count}</div>
-      <div class="banana-total">Total: ${info.count * info.points} pts</div>
+      <div class="banana-name">${type.replace(' Banana', '')}</div>
+      <div class="banana-count">×${info.count}</div>
     `;
     collectionEl.appendChild(div);
   });
   
   score = totalPoints;
   updateScore();
+}
+
+function getRarityClass(type) {
+  const rarities = {
+    'Common': 'rarity-common',
+    'Banana': 'rarity-common',
+    'Shiny Banana': 'rarity-uncommon',
+    'Rainbow Banana': 'rarity-rare',
+    'Top Hat Banana': 'rarity-rare',
+    'Graduation Banana': 'rarity-rare',
+    'Royal Banana': 'rarity-epic',
+    'Fire Banana': 'rarity-epic',
+    'Diamond Banana': 'rarity-legendary',
+    'Cosmic Banana': 'rarity-legendary'
+  };
+  return rarities[type] || 'rarity-common';
 }
 
 function saveCollection() {
