@@ -26,9 +26,12 @@
           <input id="username" readonly placeholder="Your name">
           <button id="generate-name" class="icon-btn" title="Get new name">🎲</button>
         </div>
-        <input id="pin" type="password" placeholder="PIN (leave blank for new)">
-        <p id="pin-hint" class="pin-hint"></p>
         <button id="save-score" class="btn-primary">Submit Score</button>
+        <div id="pin-section" class="pin-section hidden">
+          <input id="pin" type="password" placeholder="Enter your PIN">
+          <button id="pin-cancel" class="btn-secondary">Cancel</button>
+        </div>
+        <button id="new-device-btn" class="link-btn">Returning on a new device?</button>
       </div>
       <div class="drawer-section">
         <h3 class="drawer-title">Leaderboard</h3>

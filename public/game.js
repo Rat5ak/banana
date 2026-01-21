@@ -347,12 +347,10 @@ function loadSavedData() {
   usernameInput.readOnly = true;
   usernameInput.style.cursor = 'default';
   
-  const pinHint = document.getElementById('pin-hint');
-  if (savedPin) {
-    pinInput.value = savedPin;
-    if (pinHint) pinHint.textContent = '✓ PIN saved from last time';
-  } else {
-    if (pinHint) pinHint.textContent = '';
+  // Hide "new device" link if user already has a PIN saved
+  const newDeviceBtn = document.getElementById('new-device-btn');
+  if (savedPin && newDeviceBtn) {
+    newDeviceBtn.style.display = 'none';
   }
   
   // Auto-load leaderboard and collection for the new layout
@@ -360,6 +358,24 @@ function loadSavedData() {
   updateCollection();
 }
 
+// PIN section toggle for returning users on new devices
+const pinSection = document.getElementById('pin-section');
+const newDeviceBtn = document.getElementById('new-device-btn');
+const pinCancelBtn = document.getElementById('pin-cancel');
+
+newDeviceBtn?.addEventListener('click', () => {
+  pinSection?.classList.remove('hidden');
+  newDeviceBtn.style.display = 'none';
+  saveScoreBtn.style.display = 'none';
+  pinInput?.focus();
+});
+
+pinCancelBtn?.addEventListener('click', () => {
+  pinSection?.classList.add('hidden');
+  newDeviceBtn.style.display = '';
+  saveScoreBtn.style.display = '';
+  pinInput.value = '';
+});
 
 
 // EPIC RANDOM BANANA FUNCTION
@@ -1041,12 +1057,14 @@ leaderboardSearchInput?.addEventListener('input', (e) => {
 saveScoreBtn.addEventListener('click', async () => {
   let name = localStorage.getItem('username') || usernameInput.value.trim();
   if (!name) name = 'Anonymous Epic Player';
-  let pin = pinInput.value.trim() || localStorage.getItem('pin');
+  
+  // Use PIN from input (if user entered one via "new device" flow) or from localStorage
+  let pin = pinInput?.value.trim() || localStorage.getItem('pin');
   
   const isNewPin = !pin;
   if (isNewPin) {
+    // Auto-generate PIN silently for new users
     pin = Math.floor(1000000 + Math.random() * 9000000).toString();
-    pinInput.value = pin;
   }
   
   localStorage.setItem('username', name);
@@ -1063,22 +1081,29 @@ saveScoreBtn.addEventListener('click', async () => {
       if (!result.success && result.error === 'wrong_pin') {
         showAchievementPopup({
           icon: '❌',
-          name: 'Wrong PIN!',
-          description: 'Enter your PIN or use a different name',
+          name: 'Name already taken!',
+          description: 'Enter your PIN or get a new name',
           persistent: true
         });
-        // Clear invalid saved PIN
-        localStorage.removeItem('pin');
-        pinInput.value = '';
+        // Show PIN section so they can enter it
+        pinSection?.classList.remove('hidden');
+        if (newDeviceBtn) newDeviceBtn.style.display = 'none';
+        saveScoreBtn.style.display = 'none';
+        pinInput?.focus();
         updateLeaderboard();
         return;
       }
       
+      // Success! Save PIN and hide PIN section
+      localStorage.setItem('pin', pin);
+      pinSection?.classList.add('hidden');
+      if (newDeviceBtn) newDeviceBtn.style.display = 'none'; // Hide forever since they have a PIN now
+      saveScoreBtn.style.display = '';
+      pinInput.value = '';
+      
       // Show PIN modal for new users FIRST (before success message)
       if (isNewPin) {
         showPinModal(pin);
-      } else {
-        localStorage.setItem('pin', pin);
       }
       
       // Then show success (will appear after they dismiss PIN modal)
