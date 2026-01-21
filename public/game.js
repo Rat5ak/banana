@@ -20,21 +20,55 @@ const matrixRain = document.getElementById('matrix-rain');
 // DRAWER ELEMENTS
 const leftDrawer = document.getElementById('left-drawer');
 const rightDrawer = document.getElementById('right-drawer');
+const generateNameBtn = document.getElementById('generate-name');
 
 // Setup drawer toggles
 document.querySelectorAll('.drawer-toggle').forEach(btn => {
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
     const drawer = btn.closest('.side-drawer');
+    // Close other drawers
+    document.querySelectorAll('.side-drawer.open').forEach(d => {
+      if (d !== drawer) d.classList.remove('open');
+    });
     drawer.classList.toggle('open');
   });
 });
 
 // Close drawers when clicking outside
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.side-drawer')) {
+  if (!e.target.closest('.side-drawer') && !e.target.closest('.drawer-toggle')) {
     document.querySelectorAll('.side-drawer.open').forEach(d => d.classList.remove('open'));
   }
 });
+
+// Generate random username button
+generateNameBtn?.addEventListener('click', () => {
+  const newName = window.BananaDB?.generateUsername?.() || generateLocalUsername();
+  usernameInput.value = newName;
+  localStorage.setItem('username', newName);
+  // Clear PIN when changing name
+  pinInput.value = '';
+  localStorage.removeItem('pin');
+});
+
+// Local fallback username generator
+function generateLocalUsername() {
+  const adjs = ['Epic', 'Turbo', 'Mega', 'Super', 'Cosmic', 'Neon', 'Wild', 'Chill'];
+  const nouns = ['Banana', 'Monkey', 'Ninja', 'Gamer', 'Legend', 'Boss', 'Dude', 'Champ'];
+  const adj = adjs[Math.floor(Math.random() * adjs.length)];
+  const noun = nouns[Math.floor(Math.random() * nouns.length)];
+  return `${adj}${noun}${Math.floor(Math.random() * 999)}`;
+}
+
+// Auto-generate name if none exists
+function ensureUsername() {
+  if (!localStorage.getItem('username')) {
+    const newName = window.BananaDB?.generateUsername?.() || generateLocalUsername();
+    usernameInput.value = newName;
+    localStorage.setItem('username', newName);
+  }
+}
 
 // EPIC GAME VARIABLES
 const MAX_BANANAS = 12;
@@ -180,9 +214,14 @@ function createFlyingBanana() {
 function loadSavedData() {
   const savedName = localStorage.getItem('username');
   const savedPin = localStorage.getItem('pin');
+  
   if (savedName) {
     usernameInput.value = savedName;
+  } else {
+    // Auto-generate a fun username for new players
+    ensureUsername();
   }
+  
   if (savedPin) {
     pinInput.value = savedPin;
   }

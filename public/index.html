@@ -30,8 +30,11 @@
     <button class="drawer-toggle left-toggle">🎮</button>
     <div class="drawer-content">
       <h3 class="drawer-title">🎮 PLAYER</h3>
-      <input id="username" placeholder="Your epic name">
-      <input id="pin" placeholder="7-digit PIN">
+      <div class="username-row">
+        <input id="username" placeholder="Your epic name" readonly>
+        <button id="generate-name" class="icon-btn" title="Generate new name">🎲</button>
+      </div>
+      <input id="pin" type="password" placeholder="Secret PIN (remember this!)">
       <button id="set-credentials" class="epic-button small">💾 Save</button>
       <button id="save-score" class="epic-button small">🚀 Submit Score</button>
       <h3 class="drawer-title" style="margin-top:15px;">🏅 LEADERBOARD</h3>

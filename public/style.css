@@ -328,6 +328,39 @@ body::after {
   border-right: none;
 }
 
+/* Username row with generate button */
+.username-row {
+  display: flex;
+  gap: 8px;
+}
+
+.username-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  background: linear-gradient(135deg, #feca57, #ff9ff3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.icon-btn:hover {
+  transform: scale(1.1) rotate(15deg);
+  box-shadow: 0 0 15px rgba(254, 202, 87, 0.6);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
 .drawer-title {
   font-family: 'Orbitron', monospace;
   font-size: 0.9rem;
@@ -2012,5 +2045,131 @@ div:has(#score) {
   .epic-button {
     font-size: 0.8rem;
     padding: 10px 16px;
+  }
+}
+
+/* ========================================
+   MOBILE DRAWER FIXES
+   ======================================== */
+@media (max-width: 768px) {
+  /* Make drawers full-width on mobile */
+  .side-drawer {
+    top: auto;
+    bottom: 0;
+    left: 0 !important;
+    right: 0 !important;
+    transform: translateY(100%);
+    width: 100%;
+  }
+  
+  .side-drawer.open {
+    transform: translateY(0);
+  }
+  
+  .drawer-content {
+    width: 100% !important;
+    max-height: 60vh;
+    border-radius: 20px 20px 0 0 !important;
+    border: 2px solid rgba(78, 205, 196, 0.4) !important;
+    border-bottom: none !important;
+  }
+  
+  /* Move toggle buttons to bottom corners */
+  .drawer-toggle {
+    position: fixed;
+    top: auto;
+    bottom: 20px;
+    transform: none;
+    width: 55px;
+    height: 55px;
+    border-radius: 50% !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+  }
+  
+  .drawer-toggle:hover {
+    transform: scale(1.1);
+  }
+  
+  .left-toggle {
+    left: 20px;
+    right: auto;
+  }
+  
+  .right-toggle {
+    right: 20px;
+    left: auto;
+  }
+  
+  /* Hide toggle when drawer is open */
+  .side-drawer.open .drawer-toggle {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  /* Smaller title on mobile */
+  #main-title {
+    font-size: clamp(1.5rem, 6vw, 2.5rem);
+    padding: 0 60px; /* Space for toggle buttons */
+  }
+  
+  #subtitle {
+    font-size: 0.9rem;
+    padding: 0 20px;
+  }
+  
+  /* Ensure banana is tappable */
+  #banana {
+    font-size: clamp(4rem, 20vw, 6rem);
+  }
+  
+  #banana-container {
+    margin: 20px 0;
+  }
+  
+  /* Score display */
+  .score-display {
+    font-size: 1.3rem;
+  }
+  
+  /* Inventory adjustments */
+  #inventory {
+    padding: 10px;
+    gap: 8px;
+    margin-bottom: 80px; /* Space for bottom buttons */
+  }
+  
+  .banana-item {
+    flex: 0 1 100px;
+    padding: 10px;
+  }
+}
+
+/* Landscape mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  #main-title {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+  }
+  
+  #subtitle {
+    display: none;
+  }
+  
+  #banana {
+    font-size: 4rem;
+  }
+  
+  #banana-container {
+    margin: 10px 0;
+  }
+  
+  .score-display {
+    margin: 10px 0;
+  }
+  
+  .drawer-content {
+    max-height: 80vh;
   }
 }

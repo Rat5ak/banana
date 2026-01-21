@@ -9,7 +9,7 @@
 // 5. (Optional) Create an API key for better limits: Account → API Keys → Create
 // 6. Replace the values below:
 
-const JSONBIN_BIN_ID = '6970a8d0ae596e708feab759';  // e.g., '65a1b2c3d4e5f6g7h8i9j0'
+const JSONBIN_BIN_ID = '6970aa0c43b1c97be93ee3ae';  // e.g., '65a1b2c3d4e5f6g7h8i9j0'
 const JSONBIN_API_KEY = '';  // Optional - leave empty for public bins, or add your key for more requests
 
 // ============================================
@@ -54,15 +54,13 @@ async function saveScores(scores) {
   }
 }
 
-// Simple hash for PIN
-function simpleHash(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  return Math.abs(hash).toString(36);
+// Secure SHA-256 hash for PIN
+async function secureHash(str) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str + 'banana-secret-salt-2026');
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 // ============================================
@@ -100,7 +98,7 @@ async function getPlayerRank(username) {
 
 async function submitScore(username, pin, score) {
   const scores = await fetchScores();
-  const pinHash = simpleHash(pin + 'banana');
+  const pinHash = await secureHash(pin);
   
   const existingIndex = scores.findIndex(p => p.username.toLowerCase() === username.toLowerCase());
   
@@ -143,6 +141,28 @@ async function compareWithPlayer(myUsername, theirUsername) {
   return { me, them };
 }
 
+// 🎲 RANDOM USERNAME GENERATOR
+const adjectives = [
+  'Epic', 'Cosmic', 'Turbo', 'Mega', 'Ultra', 'Super', 'Hyper', 'Blazing',
+  'Frozen', 'Golden', 'Shadow', 'Thunder', 'Quantum', 'Neon', 'Cyber', 'Pixel',
+  'Funky', 'Groovy', 'Chill', 'Wild', 'Sneaky', 'Swift', 'Lucky', 'Mighty',
+  'Fluffy', 'Spicy', 'Crispy', 'Tropical', 'Mystic', 'Radical', 'Gnarly', 'Stellar'
+];
+
+const nouns = [
+  'Banana', 'Monkey', 'Chimp', 'Gorilla', 'Ape', 'Peeler', 'Slinger', 'Muncher',
+  'Ninja', 'Pirate', 'Wizard', 'Knight', 'Dragon', 'Phoenix', 'Panda', 'Tiger',
+  'Surfer', 'Gamer', 'Legend', 'Champion', 'Master', 'Boss', 'King', 'Queen',
+  'Dude', 'Shark', 'Wolf', 'Bear', 'Fox', 'Hawk', 'Raccoon', 'Sloth'
+];
+
+function generateUsername() {
+  const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const noun = nouns[Math.floor(Math.random() * nouns.length)];
+  const num = Math.floor(Math.random() * 999);
+  return `${adj}${noun}${num}`;
+}
+
 // Export
 window.BananaDB = {
   getGlobalLeaderboard,
@@ -150,6 +170,7 @@ window.BananaDB = {
   getPlayerRank,
   submitScore,
   compareWithPlayer,
+  generateUsername,
   isConfigured: () => JSONBIN_BIN_ID !== 'YOUR_BIN_ID_HERE'
 };
 
