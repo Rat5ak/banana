@@ -695,21 +695,18 @@ function initializeGame() {
 }
 
 // ENHANCED LEADERBOARD FUNCTIONS
-// Using localStorage since GitHub Pages is static (no backend)
 async function loadGlobalLeaderboard() {
-  try {
-    // Try server first (works on Cloudflare Pages)
-    const res = await fetch('/get-scores');
-    if (res.ok) {
-      return await res.json();
+  // Try JSONBin first if configured
+  if (window.BananaDB?.isConfigured?.()) {
+    try {
+      return await window.BananaDB.getGlobalLeaderboard(10);
+    } catch (err) {
+      console.log('BananaDB error:', err);
     }
-  } catch (error) {
-    // Server unavailable, use local storage
   }
   
-  // Fallback to local leaderboard
-  const localScores = JSON.parse(localStorage.getItem('localLeaderboard') || '[]');
-  return localScores;
+  // Fallback to local storage
+  return JSON.parse(localStorage.getItem('localLeaderboard') || '[]');
 }
 
 function saveToLocalLeaderboard(username, score) {
@@ -717,7 +714,6 @@ function saveToLocalLeaderboard(username, score) {
   const existing = localScores.findIndex(e => e.username === username);
   
   if (existing >= 0) {
-    // Update if new score is higher
     if (score > localScores[existing].score) {
       localScores[existing].score = score;
     }
@@ -725,7 +721,6 @@ function saveToLocalLeaderboard(username, score) {
     localScores.push({ username, score });
   }
   
-  // Sort and keep top 20
   localScores.sort((a, b) => b.score - a.score);
   localStorage.setItem('localLeaderboard', JSON.stringify(localScores.slice(0, 20)));
 }
@@ -736,19 +731,16 @@ async function updateLeaderboard() {
   
   if (data.length === 0) {
     const li = document.createElement('li');
-    li.innerHTML = '<span style="opacity:0.5">No scores yet!</span>';
+    li.innerHTML = '<span style="opacity:0.6;font-size:0.8rem">No scores yet! Be first 🏆</span>';
     leaderboardEl.appendChild(li);
     return;
   }
   
   data.forEach((entry, index) => {
     const li = document.createElement('li');
-    li.className = 'leaderboard-entry';
-    li.innerHTML = `
-      <span class="rank">#${index + 1}</span>
-      <span class="username">${entry.username}</span>
-      <span class="score">${entry.score}</span>
-    `;
+    const medals = ['🥇', '🥈', '🥉'];
+    const medal = medals[index] || `#${index + 1}`;
+    li.innerHTML = `<span>${medal} ${entry.username}</span><span>${entry.score}</span>`;
     
     // Add special styling for top 3
     if (index < 3) {
@@ -810,40 +802,49 @@ saveScoreBtn.addEventListener('click', async () => {
   localStorage.setItem('username', name);
   usernameInput.value = name;
 
-  // Always save to local leaderboard
+  // Always save locally as backup
   saveToLocalLeaderboard(name, score);
 
-  try {
-    const response = await fetch('/submit-score', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: name, pin, score: score })
-    });
-    
-    if (response.status === 403) {
-      showAchievementPopup({
-        icon: '❌',
-        name: 'Invalid PIN',
-        description: 'Incorrect PIN for this username'
-      });
-    } else if (response.ok) {
-      showAchievementPopup({
-        icon: '🚀',
-        name: 'Score Submitted!',
-        description: `Score ${score} saved to global leaderboard!`
-      });
+  // Try global save if configured
+  if (window.BananaDB?.isConfigured?.()) {
+    try {
+      const result = await window.BananaDB.submitScore(name, pin, score);
+      
+      if (!result.success && result.error === 'wrong_pin') {
+        showAchievementPopup({
+          icon: '❌',
+          name: 'Wrong PIN!',
+          description: 'That username is taken with a different PIN'
+        });
+        updateLeaderboard();
+        return;
+      }
+      
+      if (result.newHighscore) {
+        showAchievementPopup({
+          icon: '🚀',
+          name: 'NEW HIGH SCORE!',
+          description: `${score} pts saved to global leaderboard!`
+        });
+      } else {
+        showAchievementPopup({
+          icon: '✅',
+          name: 'Score Checked',
+          description: `Your best is still higher!`
+        });
+      }
       updateLeaderboard();
       return;
+    } catch (err) {
+      console.log('Global submit failed:', err);
     }
-  } catch (error) {
-    // Server unavailable, that's ok - we saved locally
   }
 
-  // Show local save message
+  // Local only fallback
   showAchievementPopup({
     icon: '💾',
-    name: 'Score Saved!',
-    description: `Score ${score} saved locally!`
+    name: 'Saved Locally',
+    description: `${score} pts saved! (Configure JSONBin for global)`
   });
   updateLeaderboard();
 });
