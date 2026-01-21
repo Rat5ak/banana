@@ -17,6 +17,25 @@ const comboDisplay = document.getElementById('combo-display');
 const flyingBananas = document.getElementById('flying-bananas');
 const matrixRain = document.getElementById('matrix-rain');
 
+// DRAWER ELEMENTS
+const leftDrawer = document.getElementById('left-drawer');
+const rightDrawer = document.getElementById('right-drawer');
+
+// Setup drawer toggles
+document.querySelectorAll('.drawer-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const drawer = btn.closest('.side-drawer');
+    drawer.classList.toggle('open');
+  });
+});
+
+// Close drawers when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.side-drawer')) {
+    document.querySelectorAll('.side-drawer.open').forEach(d => d.classList.remove('open'));
+  }
+});
+
 // EPIC GAME VARIABLES
 const MAX_BANANAS = 12;
 let bananas = [];
@@ -167,6 +186,10 @@ function loadSavedData() {
   if (savedPin) {
     pinInput.value = savedPin;
   }
+  
+  // Auto-load leaderboard and collection for the new layout
+  updateLeaderboard();
+  updateCollection();
 }
 
 
@@ -672,20 +695,52 @@ function initializeGame() {
 }
 
 // ENHANCED LEADERBOARD FUNCTIONS
+// Using localStorage since GitHub Pages is static (no backend)
 async function loadGlobalLeaderboard() {
   try {
+    // Try server first (works on Cloudflare Pages)
     const res = await fetch('/get-scores');
-    if (!res.ok) return [];
-    return await res.json();
+    if (res.ok) {
+      return await res.json();
+    }
   } catch (error) {
-    console.log('Leaderboard unavailable:', error);
-    return [];
+    // Server unavailable, use local storage
   }
+  
+  // Fallback to local leaderboard
+  const localScores = JSON.parse(localStorage.getItem('localLeaderboard') || '[]');
+  return localScores;
+}
+
+function saveToLocalLeaderboard(username, score) {
+  const localScores = JSON.parse(localStorage.getItem('localLeaderboard') || '[]');
+  const existing = localScores.findIndex(e => e.username === username);
+  
+  if (existing >= 0) {
+    // Update if new score is higher
+    if (score > localScores[existing].score) {
+      localScores[existing].score = score;
+    }
+  } else {
+    localScores.push({ username, score });
+  }
+  
+  // Sort and keep top 20
+  localScores.sort((a, b) => b.score - a.score);
+  localStorage.setItem('localLeaderboard', JSON.stringify(localScores.slice(0, 20)));
 }
 
 async function updateLeaderboard() {
   const data = (await loadGlobalLeaderboard()).slice(0, 10);
   leaderboardEl.innerHTML = '';
+  
+  if (data.length === 0) {
+    const li = document.createElement('li');
+    li.innerHTML = '<span style="opacity:0.5">No scores yet!</span>';
+    leaderboardEl.appendChild(li);
+    return;
+  }
+  
   data.forEach((entry, index) => {
     const li = document.createElement('li');
     li.className = 'leaderboard-entry';
@@ -755,6 +810,9 @@ saveScoreBtn.addEventListener('click', async () => {
   localStorage.setItem('username', name);
   usernameInput.value = name;
 
+  // Always save to local leaderboard
+  saveToLocalLeaderboard(name, score);
+
   try {
     const response = await fetch('/submit-score', {
       method: 'POST',
@@ -772,13 +830,21 @@ saveScoreBtn.addEventListener('click', async () => {
       showAchievementPopup({
         icon: '🚀',
         name: 'Score Submitted!',
-        description: `Score ${score} submitted successfully!`
+        description: `Score ${score} saved to global leaderboard!`
       });
+      updateLeaderboard();
+      return;
     }
   } catch (error) {
-    console.log('Score submission failed:', error);
+    // Server unavailable, that's ok - we saved locally
   }
 
+  // Show local save message
+  showAchievementPopup({
+    icon: '💾',
+    name: 'Score Saved!',
+    description: `Score ${score} saved locally!`
+  });
   updateLeaderboard();
 });
 

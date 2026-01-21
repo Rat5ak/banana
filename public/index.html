@@ -25,29 +25,31 @@
   <h1 id="main-title">🍌 EPIC BANANA COLLECTOR 🍌</h1>
   <p id="subtitle">Click the banana to collect. Rare bananas have hats!</p>
   
-  <div class="controls-panel">
-    <label>
-      🎮 Name:
-      <input id="username" placeholder="Enter your epic name">
-    </label>
-    <label>
-      🔐 PIN:
-      <input id="pin" placeholder="7-digit PIN (leave blank for new)">
-    </label>
-    <button id="set-credentials" class="epic-button">💾 Save Name/PIN</button>
-    <button id="save-score" class="epic-button">🚀 Submit Score</button>
+  <!-- FLOATING SIDE PANELS -->
+  <div id="left-drawer" class="side-drawer left">
+    <button class="drawer-toggle left-toggle">🎮</button>
+    <div class="drawer-content">
+      <h3 class="drawer-title">🎮 PLAYER</h3>
+      <input id="username" placeholder="Your epic name">
+      <input id="pin" placeholder="7-digit PIN">
+      <button id="set-credentials" class="epic-button small">💾 Save</button>
+      <button id="save-score" class="epic-button small">🚀 Submit Score</button>
+      <h3 class="drawer-title" style="margin-top:15px;">🏅 LEADERBOARD</h3>
+      <ol id="leaderboard"></ol>
+    </div>
+  </div>
+  
+  <div id="right-drawer" class="side-drawer right">
+    <button class="drawer-toggle right-toggle">📚</button>
+    <div class="drawer-content">
+      <h3 class="drawer-title">📚 COLLECTION</h3>
+      <div id="collection"></div>
+    </div>
   </div>
   
   <div class="score-display">
-    <span class="score-label">🏆 Current Score: </span>
+    <span class="score-label">🏆 Score: </span>
     <span id="score">0</span>
-  </div>
-  
-  <button id="leaderboard-toggle" class="epic-button">🏅 Show Leaderboard</button>
-  
-  <div id="leaderboard-area" style="display:none;">
-    <h2>🏅 Global Leaderboard</h2>
-    <ol id="leaderboard"></ol>
   </div>
   
   <!-- THE EPIC BANANA -->
@@ -57,12 +59,11 @@
   
   <div id="inventory"></div>
   
-  <button id="collection-toggle" class="epic-button">📚 Show Collection</button>
-  
-  <div id="collection-area" style="display:none;">
-    <h2>📚 Your Epic Collection</h2>
-    <div id="collection"></div>
-  </div>
+  <!-- Hidden legacy elements for JS compatibility -->
+  <button id="leaderboard-toggle" style="display:none;"></button>
+  <button id="collection-toggle" style="display:none;"></button>
+  <div id="leaderboard-area" style="display:none;"></div>
+  <div id="collection-area" style="display:none;"></div>
   
   <!-- ACHIEVEMENT POPUP -->
   <div id="achievement-popup" class="achievement-popup">
