@@ -98,12 +98,14 @@ body::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 24px;
-  padding: 40px 20px;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 30px 20px;
   text-align: center;
   position: relative;
   z-index: 1;
+  min-height: 100vh;
+  padding-bottom: 100px;
 }
 
 /* Score Display */
@@ -980,15 +982,130 @@ input::placeholder { color: var(--text-muted); }
 }
 
 /* ========================================
+   INVENTORY GRID - Click to add to collection!
+   ======================================== */
+
+.inventory-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  max-width: 600px;
+  width: 100%;
+  padding: 16px;
+  margin-top: 20px;
+  min-height: 100px;
+}
+
+.banana-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  min-width: 100px;
+  max-width: 120px;
+}
+
+.banana-item:hover {
+  transform: translateY(-4px) scale(1.05);
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.banana-item:active {
+  transform: scale(0.95);
+}
+
+.banana-item .emoji {
+  font-size: 2.5rem;
+  margin-bottom: 6px;
+}
+
+.banana-item .banana-name {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.banana-item .banana-points {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.banana-item .new-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--pink);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 8px;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+/* Rare banana styling */
+.banana-item.rare-banana {
+  border-color: var(--pink);
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(168, 85, 247, 0.1));
+  animation: rareGlow 2s ease-in-out infinite;
+}
+
+@keyframes rareGlow {
+  0%, 100% { box-shadow: 0 0 15px rgba(255, 107, 157, 0.3); }
+  50% { box-shadow: 0 0 25px rgba(255, 107, 157, 0.6); }
+}
+
+.banana-item .collection-btn {
+  margin-top: 8px;
+  padding: 6px 10px;
+  font-size: 0.7rem;
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.banana-item .collection-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+
+.banana-item .collection-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Common banana - less flashy */
+.banana-item.common-banana {
+  opacity: 0.7;
+}
+
+.banana-item.common-banana:hover {
+  opacity: 1;
+}
+
+/* ========================================
    LEGACY COMPATIBILITY
    ======================================== */
 
-#inventory,
 #main-title,
 #subtitle,
 .floating-shape,
 .nebula-cloud,
-.matrix-rain,
-#flying-bananas {
+.matrix-rain {
   display: none !important;
 }

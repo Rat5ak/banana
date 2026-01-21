@@ -48,7 +48,7 @@
   </div>
   <button class="drawer-toggle right-toggle" data-drawer="right">📦</button>
   
-  <!-- MAIN GAME - Clean & Focused -->
+  <!-- MAIN GAME -->
   <main class="game-main">
     <div class="score-display">
       <span id="score">0</span>
@@ -60,16 +60,13 @@
     </div>
     
     <p class="hint-text">tap to collect</p>
+    
+    <!-- INVENTORY - Click bananas to add to collection! -->
+    <div id="inventory" class="inventory-grid"></div>
   </main>
   
-  <!-- Flying bananas container (for bonus animations) -->
+  <!-- Flying bananas container -->
   <div id="flying-bananas"></div>
-  
-  <!-- Matrix rain container (legacy) -->
-  <div id="matrix-rain"></div>
-  
-  <!-- Hidden inventory element for JS compatibility -->
-  <div id="inventory" style="display:none;"></div>
   
   <!-- FLOATING POINTS ANIMATION -->
   <div id="points-display" class="points-display"></div>

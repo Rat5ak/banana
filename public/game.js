@@ -213,7 +213,7 @@ const unlockedAchievements = JSON.parse(localStorage.getItem('achievements') || 
 
 // Initialize epic systems
 initializeAudioSystem();
-initializeMatrixRain();
+// initializeMatrixRain(); // Disabled - too distracting
 initializeFlyingBananas();
 loadSavedData();
 
