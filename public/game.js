@@ -2,16 +2,13 @@
 const bananaEl = document.getElementById('banana');
 const inventoryEl = document.getElementById('inventory');
 const collectionEl = document.getElementById('collection');
-const collectionAreaEl = document.getElementById('collection-area');
-const toggleBtn = document.getElementById('collection-toggle');
 const usernameInput = document.getElementById('username');
 const pinInput = document.getElementById('pin');
 const saveScoreBtn = document.getElementById('save-score');
 const setCredsBtn = document.getElementById('set-credentials');
 const scoreEl = document.getElementById('score');
 const leaderboardEl = document.getElementById('leaderboard');
-const leaderboardAreaEl = document.getElementById('leaderboard-area');
-const leaderboardToggleBtn = document.getElementById('leaderboard-toggle');
+const leaderboardSearchInput = document.getElementById('leaderboard-search');
 const achievementPopup = document.getElementById('achievement-popup');
 const comboDisplay = document.getElementById('combo-display');
 const flyingBananas = document.getElementById('flying-bananas');
@@ -794,44 +791,6 @@ function updateScore() {
 
 // Keep existing enhanced functions but update these old ones
 
-// INITIALIZE EVERYTHING
-function initializeGame() {
-  updateLeaderboard();
-  updateInventory();
-  updateCollection();
-  
-  // Create initial flying banana
-  setTimeout(createFlyingBanana, 1000);
-  
-  // Epic welcome message
-  setTimeout(() => {
-    showAchievementPopup({
-      icon: '🍌',
-      name: 'Welcome to Epic Banana Collector!',
-      description: 'Click the banana to start your epic journey!'
-    });
-  }, 2000);
-}
-
-// INITIALIZE EVERYTHING - MOVED TO END
-function initializeGame() {
-  updateLeaderboard();
-  updateInventory();
-  updateCollection();
-  
-  // Create initial flying banana
-  setTimeout(createFlyingBanana, 1000);
-  
-  // Epic welcome message
-  setTimeout(() => {
-    showAchievementPopup({
-      icon: '🍌',
-      name: 'Welcome to Epic Banana Collector!',
-      description: 'Click the banana to start your epic journey!'
-    });
-  }, 2000);
-}
-
 // ENHANCED LEADERBOARD FUNCTIONS
 async function loadGlobalLeaderboard() {
   // Try JSONBin first if configured
@@ -863,13 +822,23 @@ function saveToLocalLeaderboard(username, score) {
   localStorage.setItem('localLeaderboard', JSON.stringify(localScores.slice(0, 20)));
 }
 
-async function updateLeaderboard() {
-  const data = (await loadGlobalLeaderboard()).slice(0, 10);
+async function updateLeaderboard(searchTerm = '') {
+  let data = await loadGlobalLeaderboard();
+  
+  // Filter by search term if provided
+  if (searchTerm) {
+    const term = searchTerm.toLowerCase();
+    data = data.filter(entry => entry.username.toLowerCase().includes(term));
+  }
+  
+  data = data.slice(0, 10);
   leaderboardEl.innerHTML = '';
   
   if (data.length === 0) {
     const li = document.createElement('li');
-    li.innerHTML = '<span style="opacity:0.6;font-size:0.8rem">No scores yet! Be first 🏆</span>';
+    li.innerHTML = searchTerm 
+      ? '<span style="opacity:0.6;font-size:0.8rem">No players found 🔍</span>'
+      : '<span style="opacity:0.6;font-size:0.8rem">No scores yet! Be first 🏆</span>';
     leaderboardEl.appendChild(li);
     return;
   }
@@ -877,47 +846,25 @@ async function updateLeaderboard() {
   data.forEach((entry, index) => {
     const li = document.createElement('li');
     const medals = ['🥇', '🥈', '🥉'];
-    const medal = medals[index] || `#${index + 1}`;
+    const medal = searchTerm ? `#${index + 1}` : (medals[index] || `#${index + 1}`);
     li.innerHTML = `<span>${medal} ${entry.username}</span><span>${entry.score}</span>`;
     
-    // Add special styling for top 3
-    if (index < 3) {
+    // Add special styling for top 3 (only when not searching)
+    if (index < 3 && !searchTerm) {
       li.classList.add(`rank-${index + 1}`);
-      const medals = ['🥇', '🥈', '🥉'];
-      li.innerHTML = `${medals[index]} ${li.innerHTML}`;
     }
     
     leaderboardEl.appendChild(li);
   });
 }
 
-// Legacy support - redirect to epic version
-function createParticleEffect(x, y) {
-  createEpicParticleEffect(x, y, { rare: false, type: 'Common Banana' });
-}
-
-// EVENT LISTENERS - REORGANIZED
-toggleBtn.addEventListener('click', () => {
-  if (collectionAreaEl.style.display === 'none') {
-    collectionAreaEl.style.display = 'block';
-    toggleBtn.textContent = '🙈 Hide Collection';
-    collectionAreaEl.style.animation = 'slideIn 0.5s ease-out';
-  } else {
-    collectionAreaEl.style.display = 'none';
-    toggleBtn.textContent = '📚 Show Collection';
-  }
-});
-
-leaderboardToggleBtn.addEventListener('click', () => {
-  if (leaderboardAreaEl.style.display === 'none') {
-    leaderboardAreaEl.style.display = 'block';
-    leaderboardToggleBtn.textContent = '🙈 Hide Leaderboard';
-    updateLeaderboard();
-    leaderboardAreaEl.style.animation = 'slideIn 0.5s ease-out';
-  } else {
-    leaderboardAreaEl.style.display = 'none';
-    leaderboardToggleBtn.textContent = '🏅 Show Leaderboard';
-  }
+// Leaderboard search with debounce
+let searchTimeout;
+leaderboardSearchInput?.addEventListener('input', (e) => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    updateLeaderboard(e.target.value.trim());
+  }, 300);
 });
 
 // EPIC EVENT LISTENERS
@@ -1060,6 +1007,30 @@ setCredsBtn.addEventListener('click', async () => {
     description: 'Your name and PIN have been saved locally'
   });
 });
+
+// ============================================
+// INITIALIZE GAME
+// ============================================
+function initializeGame() {
+  updateLeaderboard();
+  updateInventory();
+  updateCollection();
+  
+  // Create initial flying banana
+  setTimeout(createFlyingBanana, 1000);
+  
+  // Epic welcome message (only on first visit)
+  if (!localStorage.getItem('hasVisited')) {
+    localStorage.setItem('hasVisited', 'true');
+    setTimeout(() => {
+      showAchievementPopup({
+        icon: '🍌',
+        name: 'Welcome to Epic Banana Collector!',
+        description: 'Click the banana to start your epic journey!'
+      });
+    }, 1500);
+  }
+}
 
 // Start the epic game!
 initializeGame();

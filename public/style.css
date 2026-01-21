@@ -421,6 +421,32 @@ body::after {
   min-width: 0;
 }
 
+/* Search row */
+.search-row {
+  margin-bottom: 10px;
+}
+
+.search-row input {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 107, 107, 0.3);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.search-row input:focus {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+  outline: none;
+}
+
+.search-row input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
 .icon-btn {
   width: 42px;
   height: 42px;
@@ -591,18 +617,17 @@ body::after {
 #main-title {
   font-family: 'Orbitron', 'Impact', 'Arial Black', monospace;
   font-weight: 900;
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-size: clamp(1.3rem, 3.5vw, 2.2rem);
   background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff6b6b);
   background-size: 400% 400%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: epicGradientShift 4s ease-in-out infinite;
-  text-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
-  margin: 0 0 5px 0;
+  margin: 0 0 3px 0;
   position: relative;
-  filter: drop-shadow(0 0 20px rgba(255, 107, 107, 0.4)) 
-          drop-shadow(0 0 30px rgba(78, 205, 196, 0.3));
+  filter: drop-shadow(0 0 20px rgba(255, 107, 107, 0.4));
+  flex-shrink: 0;
 }
 
 #main-title::before {
@@ -626,12 +651,11 @@ body::after {
 }
 
 #subtitle {
-  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  font-size: clamp(0.7rem, 1.2vw, 0.9rem);
   color: #a0a0a0;
-  margin: 0 0 10px 0;
+  margin: 0 0 8px 0;
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-  animation: subtitleGlow 3s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 10px rgba(160, 160, 160, 0.3));
+  flex-shrink: 0;
 }
 
 .controls-panel {
@@ -715,10 +739,10 @@ body::after {
 }
 
 .score-display {
-  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-  margin: 8px 0;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  margin: 5px 0;
   text-align: center;
-  animation: scorePulse 2s ease-in-out infinite alternate;
+  flex-shrink: 0;
 }
 
 @keyframes scorePulse {
@@ -740,9 +764,10 @@ body::after {
 }
 
 #banana-container {
-  margin: 10px 0;
+  margin: 8px 0;
   position: relative;
   display: inline-block;
+  flex-shrink: 0;
 }
 
 /* ACHIEVEMENT POPUP */
@@ -1032,7 +1057,7 @@ button:disabled {
 }
 
 #banana {
-  font-size: clamp(4rem, 12vw, 5.5rem);
+  font-size: clamp(3.5rem, 10vw, 5rem);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.6, 1);
   display: inline-block;
@@ -1040,16 +1065,11 @@ button:disabled {
   animation: float 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   position: relative;
   z-index: 10;
-  /* Hardware acceleration for smoother performance */
   will-change: transform, filter;
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  /* Better transform origin for scaling */
   -webkit-transform-origin: center center;
   transform-origin: center center;
-  /* Touch improvements */
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   user-select: none;
@@ -1246,17 +1266,19 @@ button:disabled {
 }
 
 #inventory {
-  margin-top: 15px;
+  margin-top: 10px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-content: flex-start;
-  gap: 10px;
-  padding: 10px;
+  gap: 8px;
+  padding: 8px;
   max-width: 700px;
-  max-height: 22vh;
+  max-height: 20vh;
   overflow-y: auto;
   overflow-x: hidden;
+  flex-shrink: 1;
+  min-height: 0;
 }
 
 /* Scrollbar for inventory */
@@ -1275,24 +1297,21 @@ button:disabled {
 }
 
 .banana-item {
-  flex: 0 1 110px;
-  margin: 4px;
-  padding: 10px;
+  flex: 0 1 100px;
+  margin: 3px;
+  padding: 8px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px); /* Safari support */
+  -webkit-backdrop-filter: blur(10px);
   border: 2px solid rgba(78, 205, 196, 0.3);
-  border-radius: 18px;
+  border-radius: 15px;
   box-sizing: border-box;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.6, 1);
   position: relative;
   overflow: hidden;
-  /* Hardware acceleration */
-  will-change: transform, box-shadow, border-color;
+  will-change: transform, box-shadow;
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
 }
 
 .banana-item::before {
@@ -1366,8 +1385,8 @@ button:disabled {
 }
 
 .banana-item .emoji {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
+  font-size: 2rem;
+  margin-bottom: 5px;
   display: block;
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
 }
@@ -1375,21 +1394,21 @@ button:disabled {
 .banana-item div:last-of-type {
   color: #fff;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .banana-item button {
-  margin-top: 10px;
-  padding: 8px 16px;
-  font-size: 0.9rem;
-  border-radius: 10px;
+  margin-top: 8px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  border-radius: 8px;
 }
 
 /* Special styling for rare banana items */
 .banana-item:has(button) {
-  flex: 0 1 180px;
+  flex: 0 1 140px;
   border-color: #feca57;
   background: rgba(254, 202, 87, 0.1);
   animation: rarePulse 3s ease-in-out infinite;
