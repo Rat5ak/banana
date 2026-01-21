@@ -813,6 +813,13 @@ input::placeholder {
   }
 }
 
+.pin-hint {
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin: -4px 0 8px 0;
+  min-height: 1rem;
+}
+
 /* ========================================
    HIDE LEGACY
    ======================================== */

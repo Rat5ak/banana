@@ -347,8 +347,12 @@ function loadSavedData() {
   usernameInput.readOnly = true;
   usernameInput.style.cursor = 'default';
   
+  const pinHint = document.getElementById('pin-hint');
   if (savedPin) {
     pinInput.value = savedPin;
+    if (pinHint) pinHint.textContent = '✓ PIN saved from last time';
+  } else {
+    if (pinHint) pinHint.textContent = '';
   }
   
   // Auto-load leaderboard and collection for the new layout
