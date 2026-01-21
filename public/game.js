@@ -607,6 +607,8 @@ function bumpScore() {
 
 // EPIC BANANA CLICK/TAP EVENT
 function handleBananaTap(e) {
+  console.log('🍌 Banana tapped!');
+  
   // Prevent audio context issues
   if (audioContext && audioContext.state === 'suspended') {
     audioContext.resume();
@@ -1067,6 +1069,14 @@ setCredsBtn.addEventListener('click', async () => {
 // INITIALIZE GAME
 // ============================================
 function initializeGame() {
+  console.log('🎮 Game initializing...');
+  console.log('🍌 Banana element:', bananaEl);
+  
+  if (!bananaEl) {
+    console.error('❌ BANANA ELEMENT NOT FOUND!');
+    return;
+  }
+  
   updateLeaderboard();
   updateInventory();
   updateCollection();
@@ -1085,6 +1095,8 @@ function initializeGame() {
       });
     }, 1500);
   }
+  
+  console.log('✅ Game initialized!');
 }
 
 // Start the epic game!
