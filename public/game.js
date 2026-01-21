@@ -607,8 +607,6 @@ function bumpScore() {
 
 // EPIC BANANA CLICK/TAP EVENT
 function handleBananaTap(e) {
-  console.log('🍌 Banana tapped!');
-  
   // Prevent audio context issues
   if (audioContext && audioContext.state === 'suspended') {
     audioContext.resume();
@@ -627,16 +625,22 @@ function handleBananaTap(e) {
   // Update combo system
   updateCombo();
   
-  // Show floating points
+  // Calculate and ADD score immediately on tap!
   const points = (b.points || 1) * comboMultiplier;
+  score += points;
+  updateScore();
+  
+  // Show floating points
   showFloatingPoints(x, y - 40, points, b.rare);
   bumpScore();
   
-  // Play appropriate sound
+  // Haptic feedback on mobile
   if (b.rare) {
+    navigator.vibrate?.([20, 30, 20]); // Exciting pattern for rares
     playSound('rare');
     rareCount++;
   } else {
+    navigator.vibrate?.(10); // Subtle tap
     playSound('click');
   }
   
@@ -739,31 +743,84 @@ function updateInventory() {
     `;
     
     if (b.rare) {
-      const btn = document.createElement('button');
-      btn.textContent = b.added ? '✓ Added' : '📚 Add to Collection';
-      btn.className = 'epic-button collection-btn';
-      btn.disabled = b.added;
-      btn.addEventListener('click', () => {
+      // Make the whole card tappable to add to collection
+      div.style.cursor = 'pointer';
+      
+      const addToCollection = () => {
         if (b.added) return;
         b.added = true;
         collection.push(b);
         saveCollection();
-        updateCollection();
-        btn.textContent = '✓ Added';
-        btn.disabled = true;
         
-        // Epic collection effect
-        createEpicParticleEffect(
-          btn.getBoundingClientRect().left + btn.offsetWidth / 2,
-          btn.getBoundingClientRect().top + btn.offsetHeight / 2,
-          b
-        );
+        // Haptic feedback
+        navigator.vibrate?.([15, 20, 15]);
+        
+        // Play sound
+        playSound('achievement');
+        
+        // Fly-to-drawer animation
+        flyToDrawer(div);
+        
+        // Update after animation
+        setTimeout(() => {
+          updateCollection();
+          updateInventory();
+        }, 400);
+      };
+      
+      // Tap anywhere on rare card to add
+      div.addEventListener('click', (e) => {
+        if (e.target.classList.contains('collection-btn')) return; // Let button handle itself
+        addToCollection();
+      });
+      
+      // Also keep the button for clarity
+      const btn = document.createElement('button');
+      btn.textContent = b.added ? '✓ Added' : 'Tap to Add';
+      btn.className = 'epic-button collection-btn';
+      btn.disabled = b.added;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        addToCollection();
       });
       div.appendChild(btn);
     }
     
     inventoryEl.appendChild(div);
   });
+}
+
+// Fly-to-drawer animation for satisfying collection feel
+function flyToDrawer(cardEl) {
+  const card = cardEl.cloneNode(true);
+  const rect = cardEl.getBoundingClientRect();
+  const drawerBtn = document.querySelector('.right-toggle');
+  const targetRect = drawerBtn?.getBoundingClientRect() || { left: window.innerWidth - 50, top: window.innerHeight / 2 };
+  
+  card.style.cssText = `
+    position: fixed;
+    left: ${rect.left}px;
+    top: ${rect.top}px;
+    width: ${rect.width}px;
+    height: ${rect.height}px;
+    z-index: 9999;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+  `;
+  
+  document.body.appendChild(card);
+  
+  // Trigger animation
+  requestAnimationFrame(() => {
+    card.style.left = `${targetRect.left}px`;
+    card.style.top = `${targetRect.top}px`;
+    card.style.transform = 'scale(0.2)';
+    card.style.opacity = '0';
+  });
+  
+  // Clean up
+  setTimeout(() => card.remove(), 400);
 }
 
 function getRarityColor(type) {
@@ -803,14 +860,13 @@ function updateCollection() {
     div.className = `collection-item ${rarity}`;
     div.innerHTML = `
       <div class="emoji">${info.emoji}</div>
-      <div class="banana-name">${type.replace(' Banana', '')}</div>
-      <div class="banana-count">×${info.count}</div>
+      <div class="name">${type.replace(' Banana', '')}</div>
+      <div class="count">×${info.count}</div>
     `;
     collectionEl.appendChild(div);
   });
   
-  score = totalPoints;
-  updateScore();
+  // Note: score now increments on every tap, collection is bonus progression
 }
 
 function getRarityClass(type) {
@@ -855,7 +911,7 @@ async function loadGlobalLeaderboard() {
     try {
       return await window.BananaDB.getGlobalLeaderboard(10);
     } catch (err) {
-      console.log('BananaDB error:', err);
+      // Silently fall back to local
     }
   }
   
@@ -903,8 +959,12 @@ async function updateLeaderboard(searchTerm = '') {
   data.forEach((entry, index) => {
     const li = document.createElement('li');
     const medals = ['🥇', '🥈', '🥉'];
-    const medal = searchTerm ? `#${index + 1}` : (medals[index] || `#${index + 1}`);
-    li.innerHTML = `<span>${medal} ${entry.username}</span><span>${entry.score}</span>`;
+    const medal = searchTerm ? `${index + 1}` : (medals[index] || `${index + 1}`);
+    li.innerHTML = `
+      <span class="rank">${medal}</span>
+      <span class="name">${entry.username}</span>
+      <span class="lb-score">${entry.score}</span>
+    `;
     
     // Add special styling for top 3 (only when not searching)
     if (index < 3 && !searchTerm) {
@@ -978,7 +1038,7 @@ saveScoreBtn.addEventListener('click', async () => {
       updateLeaderboard();
       return;
     } catch (err) {
-      console.log('Global submit failed:', err);
+      // Silently fall back to local save
     }
   }
 
@@ -991,91 +1051,11 @@ saveScoreBtn.addEventListener('click', async () => {
   updateLeaderboard();
 });
 
-setCredsBtn.addEventListener('click', async () => {
-  const name = usernameInput.value.trim();
-  let pin = pinInput.value.trim();
-  
-  if (!name) {
-    showAchievementPopup({
-      icon: '⚠️',
-      name: 'Need a Name!',
-      description: 'Please enter or generate a username'
-    });
-    return;
-  }
-  
-  // For returning players, verify credentials with server
-  if (isReturningPlayer) {
-    if (!pin) {
-      showAchievementPopup({
-        icon: '⚠️',
-        name: 'Need PIN!',
-        description: 'Enter your PIN to log back in'
-      });
-      return;
-    }
-    
-    // Try to verify by checking if we can get player rank
-    if (window.BananaDB?.isConfigured?.()) {
-      const result = await window.BananaDB.submitScore(name, pin, 0);
-      if (result.error === 'wrong_pin') {
-        showAchievementPopup({
-          icon: '❌',
-          name: 'Wrong PIN!',
-          description: 'That PIN doesn\'t match this username'
-        });
-        return;
-      }
-    }
-    
-    // Success - save locally
-    localStorage.setItem('username', name);
-    localStorage.setItem('pin', pin);
-    
-    showAchievementPopup({
-      icon: '✅',
-      name: 'Welcome Back!',
-      description: `Logged in as ${name}`
-    });
-    
-    // Switch back to new player mode visually
-    tabNew?.click();
-    return;
-  }
-  
-  // New player flow
-  if (!pin) {
-    pin = Math.floor(1000000 + Math.random() * 9000000).toString();
-    showAchievementPopup({
-      icon: '🔐',
-      name: 'PIN Generated!',
-      description: `Your new PIN is ${pin}. Keep it safe!`
-    });
-  }
-  
-  localStorage.setItem('username', name);
-  usernameInput.value = name;
-  localStorage.setItem('pin', pin);
-  pinInput.value = pin;
-  
-  showAchievementPopup({
-    icon: '💾',
-    name: 'Credentials Saved!',
-    description: 'Your name and PIN have been saved locally'
-  });
-});
-
 // ============================================
 // INITIALIZE GAME
 // ============================================
 function initializeGame() {
-  console.log('🎮 Game initializing...');
-  console.log('🍌 Banana element:', bananaEl);
-  
-  if (!bananaEl) {
-    console.error('❌ BANANA ELEMENT NOT FOUND!');
-    return;
-  }
+  if (!bananaEl) return;
   
   updateLeaderboard();
   updateInventory();
@@ -1095,8 +1075,6 @@ function initializeGame() {
       });
     }, 1500);
   }
-  
-  console.log('✅ Game initialized!');
 }
 
 // Start the epic game!
