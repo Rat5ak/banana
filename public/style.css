@@ -38,6 +38,13 @@ body {
   overscroll-behavior: none;
 }
 
+/* Prevent body scroll on desktop */
+@media (min-width: 768px) {
+  body {
+    overflow: hidden;
+  }
+}
+
 /* Subtle animated background */
 .bg-gradient {
   position: fixed;
@@ -123,24 +130,36 @@ body {
 }
 
 /* ========================================
-   INVENTORY
+   INVENTORY - Horizontal scroll strip
    ======================================== */
 
 .inventory-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
   gap: 8px;
   width: 100%;
-  max-width: 340px;
+  max-width: 100vw;
+  padding: 0 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.inventory-grid::-webkit-scrollbar {
+  display: none;
 }
 
 .banana-item {
+  flex: 0 0 auto;
+  width: 90px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 10px 6px;
   text-align: center;
   position: relative;
+  scroll-snap-align: start;
 }
 
 .banana-item .emoji {
@@ -661,6 +680,8 @@ input::placeholder {
     padding: 40px 20px;
     padding-bottom: 40px;
     justify-content: center;
+    height: 100vh;
+    overflow: hidden;
   }
   
   #score {
@@ -668,25 +689,36 @@ input::placeholder {
   }
   
   #banana {
-    font-size: 6rem;
+    font-size: 7rem;
   }
   
+  /* Bigger inventory items on desktop */
   .inventory-grid {
-    max-width: 500px;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    max-width: 800px;
+    justify-content: center;
+    padding: 0 40px;
   }
   
   .banana-item {
-    padding: 12px 8px;
+    width: 130px;
+    padding: 14px 10px;
   }
   
   .banana-item .emoji {
-    font-size: 2.2rem;
+    font-size: 2.8rem;
   }
   
   .banana-item .banana-name {
-    font-size: 0.6rem;
+    font-size: 0.7rem;
+  }
+  
+  .banana-item .banana-points {
+    font-size: 0.85rem;
+  }
+  
+  .banana-item .collection-btn {
+    padding: 8px 10px;
+    font-size: 0.65rem;
   }
   
   /* Desktop: Side panels instead of bottom sheets */
@@ -756,12 +788,28 @@ input::placeholder {
   }
   
   #banana {
-    font-size: 8rem;
+    font-size: 9rem;
   }
   
   .inventory-grid {
-    max-width: 600px;
-    grid-template-columns: repeat(5, 1fr);
+    max-width: 1000px;
+  }
+  
+  .banana-item {
+    width: 150px;
+    padding: 16px 12px;
+  }
+  
+  .banana-item .emoji {
+    font-size: 3.2rem;
+  }
+  
+  .banana-item .banana-name {
+    font-size: 0.75rem;
+  }
+  
+  .banana-item .banana-points {
+    font-size: 0.9rem;
   }
 }
 
