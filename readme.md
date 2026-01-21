@@ -1,62 +1,145 @@
-# Banana Collector Game
+# 🍌 EPIC Banana Collector
 
-A simple web game where you collect bananas, some of which are rare and wear hats.
-Rare types include Shiny (✨) and Rainbow (🌈) bananas in addition to the original
-Top Hat and Graduation varieties. Rare bananas can be added to your personal
-collection using the button that appears next to them. The collection sits in the
-top corner of the page and stays visible as you play. It is stored in your browser
-so it persists between visits. New bananas now appear first so you always see the
-latest ones at the top.
+> *The most EPIC banana collecting game ever created!*
 
-If you manage to grab ten ordinary bananas in a row the game resets your stash,
-forcing you to start collecting again.
+Click the banana to collect. Some bananas are rare and wear fancy hats! Build your collection, climb the global leaderboard, and try not to get 15 common bananas in a row (or it's game over!).
 
-Scores are now submitted to a global leaderboard using Cloudflare Pages
-Functions and KV storage so everyone sees the same results.
+![Game Preview](https://img.shields.io/badge/status-EPIC-gold?style=for-the-badge)
 
-## Setup
+## 🎮 How to Play
 
-This project is designed to run on **Cloudflare Pages** with Functions.
+1. **Click/tap the banana** to collect it
+2. **Rare bananas** (✨ Shiny, 🌈 Rainbow, 🎩 Top Hat, 👑 Royal, etc.) can be added to your permanent collection
+3. **Build combos** by clicking quickly for bonus points
+4. **Avoid getting 15 common bananas in a row** or the game resets!
 
-1. Create a Pages project from this repository.
-2. In the Cloudflare dashboard go to **Pages → Functions → KV Namespaces** and
-   create a binding. The examples here use `SCORES` but any name works – for
-   instance a binding of `KV_BINDING` will also be picked up by the code.
-   See the [Cloudflare KV quick start guide](https://developers.cloudflare.com/kv/get-started/)
-   for more details.
-3. Deploy the site. Cloudflare will automatically detect the `functions/`
-   folder and expose `/submit-score` and `/get-scores` endpoints.
-4. After deployment open your site URL to start collecting bananas!
-   If you receive a `405 Method Not Allowed` error when submitting scores,
-   make sure your project is deployed as **Cloudflare Pages** with Functions
-   enabled so the `/submit-score` and `/get-scores` routes are handled by the
-   backend code.
+## 🏆 Leaderboard & Accounts
 
-## Leaderboard
+### New Players
+1. Open the 🎮 Player panel (left side on desktop, bottom-left button on mobile)
+2. Click **✨ New Player** tab
+3. A random username is generated for you (click 🎲 to get a new one)
+4. Click **💾 Save** - a secret PIN will be generated
+5. **⚠️ WRITE DOWN YOUR PIN!** You need it to log back in later
+6. Click **🚀 Submit Score** to save your score to the global leaderboard
 
-Click **Save Name/PIN** to store your credentials in the browser. The first time
-you save (or if you leave the PIN field blank) a random 7‑digit PIN is
-generated. Keep this PIN safe – you need the same username and PIN to update
-your score later or from another device. You can sign in on another computer by
-entering the same username and PIN.
+### Returning Players
+1. Open the 🎮 Player panel
+2. Click **🔑 Returning** tab  
+3. Enter your **exact username** (case-insensitive)
+4. Enter your **PIN**
+5. Click **💾 Save** to verify and log back in
+6. Your score is now linked - submit new high scores anytime!
 
-When you hit **Submit Score** the game sends a request to `/submit-score` with
-your username, PIN and current score. Scores are stored in the `SCORES` KV
-namespace and `/get-scores` returns the global leaderboard sorted by score.
-Use the **Show Leaderboard** button in the game to toggle the leaderboard
-overlay and see the top scores.
+## 🍌 Banana Rarity
 
-If you want to run the backend separately as a Cloudflare Worker instead of
-Pages Functions, copy the files in `functions/` to a Worker project and bind the
-same KV namespace. Below is a minimal `wrangler.toml` example:
+| Emoji | Type | Rarity | Points |
+|-------|------|--------|--------|
+| 🍌 | Common Banana | 60% | 1 |
+| 🍌✨ | Shiny Banana | 15% | 5 |
+| 🍌🌈 | Rainbow Banana | 10% | 10 |
+| 🍌🎩 | Top Hat Banana | 8% | 15 |
+| 🍌🎓 | Graduation Banana | 5% | 20 |
+| 🍌👑 | Royal Banana | 1.5% | 50 |
+| 🍌💎 | Diamond Banana | 0.5% | 100 |
 
-```toml
-kv_namespaces = [
-  { binding = "KV_BINDING", id = "<your_namespace_id>" }
-]
+## 📱 Mobile Support
+
+- **Optimized for touch** - instant tap response, no delays
+- **Bottom-sheet drawers** slide up from the bottom
+- **Swipe down** to close drawers
+- **PWA installable** - add to home screen for app-like experience
+- **Safe area support** for notched phones (iPhone X+)
+
+## 🔧 Technical Setup
+
+### Quick Start (Static Hosting)
+
+The game works on any static host (GitHub Pages, Netlify, Vercel, etc.) with **JSONBin.io** for the leaderboard:
+
+1. Go to [jsonbin.io](https://jsonbin.io) and create a free account
+2. Create a new bin with this content: `{"scores":[]}`
+3. Copy the **Bin ID** from the URL
+4. Edit `public/jsonbin-config.js`:
+   ```js
+   const JSONBIN_BIN_ID = 'your-bin-id-here';
+   ```
+5. Make the bin **public** (or add your API key for private bins)
+6. Deploy to any static host!
+
+### Cloudflare Pages (Original Setup)
+
+For Cloudflare Pages with KV storage (serverless backend):
+
+1. Create a Pages project from this repository
+2. In Cloudflare dashboard: **Pages → Functions → KV Namespaces**
+3. Create a binding named `SCORES`
+4. Deploy - the `functions/` folder auto-configures endpoints
+
+### Local Development
+
+```bash
+# Install dependencies (just for the dev server)
+npm install
+
+# Start local server
+npx serve public
+
+# Or use any static server
+python -m http.server 8080 --directory public
 ```
 
-The binding name in your configuration is picked up automatically by the code,
-so you can use `SCORES`, `KV_BINDING`, or any other name.
+## 🔐 Security
 
-Licensed under the MIT License. See [LICENSE](LICENSE) for details.
+- **PINs are hashed** using SHA-256 before storage (never stored in plain text)
+- **Salt added** to prevent rainbow table attacks
+- **No passwords transmitted** - only hash comparisons happen server-side
+- PINs are stored locally for convenience but can be re-entered anytime
+
+## 📁 Project Structure
+
+```
+banana/
+├── public/
+│   ├── index.html         # Main game HTML
+│   ├── style.css          # All styles (~2400 lines of glory)
+│   ├── game.js            # Game logic & UI (~990 lines)
+│   ├── jsonbin-config.js  # Leaderboard API wrapper
+│   └── manifest.json      # PWA manifest
+├── functions/             # Cloudflare Pages serverless functions
+│   ├── get-scores.js
+│   └── submit-score.js
+├── package.json
+└── readme.md
+```
+
+## 🎨 Features
+
+- ✨ Particle effects on banana clicks
+- 🌟 Achievement popup system
+- 🔥 Combo multiplier with visual feedback
+- 🎵 Sound effects (generated via Web Audio API)
+- 💾 Auto-saves collection to localStorage
+- 📊 Global leaderboard via JSONBin.io
+- 🎲 Random username generator for privacy
+- 📱 Fully responsive mobile-first design
+- 🌙 Epic dark theme with nebula backgrounds
+- ⚡ Hardware-accelerated animations
+
+## 🚀 Deployment
+
+### GitHub Pages
+```bash
+# Push to main branch, enable Pages in repo settings
+# Set source to: / (root) or /public if you move files
+```
+
+### Netlify / Vercel
+Just connect the repo - auto-deploys on push!
+
+### Manual
+Upload the `public/` folder contents to any web server.
+
+---
+
+Made with 🍌 and excessive CSS gradients.

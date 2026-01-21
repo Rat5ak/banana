@@ -378,6 +378,38 @@ body::after {
   border-right: none;
 }
 
+/* Login tabs */
+.login-tabs {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, rgba(78, 205, 196, 0.4), rgba(255, 107, 107, 0.4));
+  border-color: rgba(78, 205, 196, 0.6);
+  color: #fff;
+}
+
 /* Username row with generate button */
 .username-row {
   display: flex;

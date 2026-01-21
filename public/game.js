@@ -104,6 +104,34 @@ document.querySelectorAll('.drawer-content').forEach(content => {
   }, { passive: true });
 });
 
+// Login tab system
+const tabNew = document.getElementById('tab-new');
+const tabReturn = document.getElementById('tab-return');
+let isReturningPlayer = false;
+
+tabNew?.addEventListener('click', () => {
+  isReturningPlayer = false;
+  tabNew.classList.add('active');
+  tabReturn.classList.remove('active');
+  generateNameBtn.style.display = '';
+  usernameInput.placeholder = 'Your epic name';
+  // Generate a fresh name for new players
+  if (!usernameInput.value) {
+    const newName = window.BananaDB?.generateUsername?.() || generateLocalUsername();
+    usernameInput.value = newName;
+  }
+});
+
+tabReturn?.addEventListener('click', () => {
+  isReturningPlayer = true;
+  tabReturn.classList.add('active');
+  tabNew.classList.remove('active');
+  generateNameBtn.style.display = 'none';
+  usernameInput.placeholder = 'Enter your username';
+  usernameInput.value = '';
+  pinInput.value = '';
+});
+
 // Generate random username button
 generateNameBtn?.addEventListener('click', () => {
   const newName = window.BananaDB?.generateUsername?.() || generateLocalUsername();
@@ -959,10 +987,59 @@ saveScoreBtn.addEventListener('click', async () => {
   updateLeaderboard();
 });
 
-setCredsBtn.addEventListener('click', () => {
+setCredsBtn.addEventListener('click', async () => {
   const name = usernameInput.value.trim();
   let pin = pinInput.value.trim();
   
+  if (!name) {
+    showAchievementPopup({
+      icon: '⚠️',
+      name: 'Need a Name!',
+      description: 'Please enter or generate a username'
+    });
+    return;
+  }
+  
+  // For returning players, verify credentials with server
+  if (isReturningPlayer) {
+    if (!pin) {
+      showAchievementPopup({
+        icon: '⚠️',
+        name: 'Need PIN!',
+        description: 'Enter your PIN to log back in'
+      });
+      return;
+    }
+    
+    // Try to verify by checking if we can get player rank
+    if (window.BananaDB?.isConfigured?.()) {
+      const result = await window.BananaDB.submitScore(name, pin, 0);
+      if (result.error === 'wrong_pin') {
+        showAchievementPopup({
+          icon: '❌',
+          name: 'Wrong PIN!',
+          description: 'That PIN doesn\'t match this username'
+        });
+        return;
+      }
+    }
+    
+    // Success - save locally
+    localStorage.setItem('username', name);
+    localStorage.setItem('pin', pin);
+    
+    showAchievementPopup({
+      icon: '✅',
+      name: 'Welcome Back!',
+      description: `Logged in as ${name}`
+    });
+    
+    // Switch back to new player mode visually
+    tabNew?.click();
+    return;
+  }
+  
+  // New player flow
   if (!pin) {
     pin = Math.floor(1000000 + Math.random() * 9000000).toString();
     showAchievementPopup({
@@ -972,10 +1049,8 @@ setCredsBtn.addEventListener('click', () => {
     });
   }
   
-  if (name) {
-    localStorage.setItem('username', name);
-    usernameInput.value = name;
-  }
+  localStorage.setItem('username', name);
+  usernameInput.value = name;
   localStorage.setItem('pin', pin);
   pinInput.value = pin;
   
