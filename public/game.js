@@ -607,13 +607,8 @@ function bumpScore() {
 
 // EPIC BANANA CLICK/TAP EVENT
 function handleBananaTap(e) {
-  // Prevent double-firing on touch devices
-  if (e.type === 'touchstart') {
-    e.preventDefault();
-  }
-  
   // Prevent audio context issues
-  if (audioContext.state === 'suspended') {
+  if (audioContext && audioContext.state === 'suspended') {
     audioContext.resume();
   }
   
@@ -675,9 +670,13 @@ function handleBananaTap(e) {
   }, 200);
 }
 
-// Register both click and touch events
+// Register click event (simpler - works better across all browsers)
 bananaEl.addEventListener('click', handleBananaTap);
-bananaEl.addEventListener('touchstart', handleBananaTap, { passive: false });
+// Touch event for mobile with passive false to allow preventDefault
+bananaEl.addEventListener('touchend', (e) => {
+  e.preventDefault(); // Prevent ghost click
+  handleBananaTap(e);
+}, { passive: false });
 
 function showGameOverModal() {
   const modal = document.createElement('div');
