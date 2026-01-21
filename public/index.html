@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#1a1a2e">
+  <link rel="manifest" href="manifest.json">
   <title>🍌 EPIC Banana Collector 🍌</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -25,9 +29,11 @@
   <h1 id="main-title">🍌 EPIC BANANA COLLECTOR 🍌</h1>
   <p id="subtitle">Click the banana to collect. Rare bananas have hats!</p>
   
+  <!-- DRAWER BACKDROP (for mobile) -->
+  <div id="drawer-backdrop" class="drawer-backdrop"></div>
+  
   <!-- FLOATING SIDE PANELS -->
   <div id="left-drawer" class="side-drawer left">
-    <button class="drawer-toggle left-toggle">🎮</button>
     <div class="drawer-content">
       <h3 class="drawer-title">🎮 PLAYER</h3>
       <div class="username-row">
@@ -41,14 +47,15 @@
       <ol id="leaderboard"></ol>
     </div>
   </div>
+  <button class="drawer-toggle left-toggle" data-drawer="left">🎮</button>
   
   <div id="right-drawer" class="side-drawer right">
-    <button class="drawer-toggle right-toggle">📚</button>
     <div class="drawer-content">
       <h3 class="drawer-title">📚 COLLECTION</h3>
       <div id="collection"></div>
     </div>
   </div>
+  <button class="drawer-toggle right-toggle" data-drawer="right">📚</button>
   
   <div class="score-display">
     <span class="score-label">🏆 Score: </span>

@@ -1,5 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap');
 
+/* Global touch/mobile improvements */
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  /* Prevent overscroll/bounce on iOS */
+  overscroll-behavior: none;
+}
+
 body {
   font-family: 'Rajdhani', 'Arial Black', 'Helvetica', sans-serif;
   text-align: center;
@@ -22,6 +32,11 @@ body {
   transform: translate3d(0, 0, 0);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+  /* Prevent text selection on game elements */
+  -webkit-user-select: none;
+  user-select: none;
+  /* Prevent overscroll */
+  overscroll-behavior: none;
 }
 
 /* EPIC BACKGROUND SYSTEM */
@@ -249,11 +264,32 @@ body::after {
    SLIDE-OUT DRAWER PANELS
    ======================================== */
 
+/* Backdrop for mobile drawers */
+.drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 1500;
+  pointer-events: none;
+}
+
+.drawer-backdrop.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
 .side-drawer {
   position: fixed;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 1000;
+  z-index: 2000;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -299,8 +335,9 @@ body::after {
   border-right: none;
 }
 
+/* Toggle buttons - positioned independently of drawers */
 .drawer-toggle {
-  position: absolute;
+  position: fixed;
   top: 50%;
   transform: translateY(-50%);
   width: 40px;
@@ -314,7 +351,7 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
+  z-index: 1001;
   opacity: 0.8;
 }
 
@@ -324,14 +361,19 @@ body::after {
   opacity: 1;
 }
 
+.drawer-toggle.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .left-toggle {
-  right: -40px;
+  left: 0;
   border-radius: 0 10px 10px 0;
   border-left: none;
 }
 
 .right-toggle {
-  left: -40px;
+  right: 0;
   border-radius: 10px 0 0 10px;
   border-right: none;
 }
@@ -385,11 +427,14 @@ body::after {
   border-radius: 10px;
   padding: 10px 12px;
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 1rem; /* 16px minimum prevents iOS zoom */
   font-family: 'Rajdhani', sans-serif;
   transition: all 0.3s ease;
   width: 100%;
   box-sizing: border-box;
+  /* Allow text selection in inputs */
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .drawer-content input:focus {
@@ -972,6 +1017,16 @@ button:disabled {
   /* Better transform origin for scaling */
   -webkit-transform-origin: center center;
   transform-origin: center center;
+  /* Touch improvements */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#banana:active {
+  transform: scale(0.9);
+  filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.6));
 }
 
 /* EPIC BANANA GLOW RINGS */
@@ -2074,17 +2129,98 @@ div:has(#score) {
 }
 
 /* ========================================
-   MOBILE DRAWER FIXES
+   MOBILE-FIRST RESPONSIVE DESIGN
    ======================================== */
+
+/* Tablet and below */
 @media (max-width: 768px) {
-  /* Make drawers full-width on mobile */
+  body {
+    padding: 10px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    justify-content: flex-start;
+    padding-top: calc(10px + env(safe-area-inset-top, 0px));
+  }
+  
+  /* Title adjustments */
+  #main-title {
+    font-size: clamp(1.3rem, 5vw, 2rem);
+    margin: 5px 0;
+    padding: 0 10px;
+  }
+  
+  #main-title::before {
+    display: none; /* Remove glow on mobile for performance */
+  }
+  
+  #subtitle {
+    font-size: 0.8rem;
+    margin: 0 0 8px 0;
+    padding: 0 10px;
+  }
+  
+  /* Score */
+  .score-display {
+    font-size: 1.1rem;
+    margin: 5px 0;
+  }
+  
+  /* Banana - needs to be big and tappable */
+  #banana {
+    font-size: clamp(4rem, 18vw, 5rem);
+  }
+  
+  #banana-container {
+    margin: 10px 0;
+  }
+  
+  /* Remove glow rings on mobile for performance */
+  #banana::before,
+  #banana::after {
+    display: none;
+  }
+  
+  /* Inventory - scrollable area */
+  #inventory {
+    flex: 1;
+    max-height: none;
+    height: auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 8px;
+    gap: 8px;
+    margin-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .banana-item {
+    flex: 0 1 90px;
+    padding: 8px;
+    margin: 3px;
+  }
+  
+  .banana-item .emoji {
+    font-size: 1.3rem;
+  }
+  
+  .banana-item .banana-name {
+    font-size: 0.6rem;
+  }
+  
+  /* ========================================
+     MOBILE DRAWER SYSTEM
+     ======================================== */
+  
+  /* Drawers slide up from bottom */
   .side-drawer {
-    top: auto;
+    position: fixed;
+    top: auto !important;
     bottom: 0;
     left: 0 !important;
     right: 0 !important;
-    transform: translateY(100%);
     width: 100%;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2000;
   }
   
   .side-drawer.open {
@@ -2093,108 +2229,226 @@ div:has(#score) {
   
   .drawer-content {
     width: 100% !important;
-    max-height: 60vh;
-    border-radius: 20px 20px 0 0 !important;
-    border: 2px solid rgba(78, 205, 196, 0.4) !important;
+    max-height: 65vh;
+    max-height: 65dvh;
+    border-radius: 24px 24px 0 0 !important;
+    border: 2px solid rgba(78, 205, 196, 0.5) !important;
     border-bottom: none !important;
+    padding: 20px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   }
   
-  /* Move toggle buttons to bottom corners */
+  /* Drawer handle indicator */
+  .drawer-content::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+  }
+  
+  /* Toggle buttons - floating at bottom */
   .drawer-toggle {
-    position: fixed;
-    top: auto;
-    bottom: 20px;
-    transform: none;
-    width: 55px;
-    height: 55px;
+    position: fixed !important;
+    top: auto !important;
+    bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+    transform: none !important;
+    width: 56px;
+    height: 56px;
     border-radius: 50% !important;
     border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    z-index: 1001;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    z-index: 2500;
+    font-size: 1.4rem;
+    opacity: 1;
   }
   
-  .drawer-toggle:hover {
-    transform: scale(1.1);
+  .drawer-toggle:active {
+    transform: scale(0.95) !important;
+  }
+  
+  .drawer-toggle.hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
   
   .left-toggle {
-    left: 20px;
-    right: auto;
+    left: calc(15px + env(safe-area-inset-left, 0px));
+    right: auto !important;
   }
   
   .right-toggle {
-    right: 20px;
-    left: auto;
+    right: calc(15px + env(safe-area-inset-right, 0px));
+    left: auto !important;
   }
   
-  /* Hide toggle when drawer is open */
-  .side-drawer.open .drawer-toggle {
-    opacity: 0;
-    pointer-events: none;
+  /* Drawer inputs - bigger touch targets */
+  .drawer-content input {
+    padding: 14px 16px;
+    font-size: 16px; /* Prevents iOS zoom */
+    min-height: 48px;
+    box-sizing: border-box;
   }
   
-  /* Smaller title on mobile */
-  #main-title {
-    font-size: clamp(1.5rem, 6vw, 2.5rem);
-    padding: 0 60px; /* Space for toggle buttons */
-  }
-  
-  #subtitle {
+  .drawer-content .epic-button {
+    padding: 14px 20px;
     font-size: 0.9rem;
-    padding: 0 20px;
+    min-height: 48px;
   }
   
-  /* Ensure banana is tappable */
-  #banana {
-    font-size: clamp(4rem, 20vw, 6rem);
-  }
-  
-  #banana-container {
-    margin: 20px 0;
-  }
-  
-  /* Score display */
-  .score-display {
+  .icon-btn {
+    width: 48px;
+    height: 48px;
     font-size: 1.3rem;
   }
   
-  /* Inventory adjustments */
-  #inventory {
+  /* Leaderboard in drawer */
+  .drawer-content ol {
+    max-height: 30vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .drawer-content ol li {
+    padding: 12px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Collection in drawer */
+  .drawer-content #collection {
+    max-height: 35vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  
+  .drawer-content #collection .banana-item,
+  .drawer-content #collection .collection-item {
     padding: 10px;
-    gap: 8px;
-    margin-bottom: 80px; /* Space for bottom buttons */
+    font-size: 1.4rem;
+    min-height: 60px;
+  }
+  
+  /* Achievement popup - mobile friendly */
+  .achievement-popup {
+    width: calc(100% - 40px);
+    max-width: 350px;
+    padding: 20px;
+  }
+  
+  .achievement-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .achievement-icon {
+    font-size: 2.5rem;
+  }
+  
+  /* Combo display */
+  .combo-display {
+    top: 20%;
+    padding: 12px 20px;
+  }
+  
+  /* Reduce animations for better performance */
+  .floating-shape,
+  .nebula-cloud,
+  .matrix-rain {
+    display: none;
+  }
+}
+
+/* Small phones */
+@media (max-width: 380px) {
+  #main-title {
+    font-size: 1.2rem;
+  }
+  
+  #banana {
+    font-size: 3.5rem;
   }
   
   .banana-item {
-    flex: 0 1 100px;
-    padding: 10px;
+    flex: 0 1 75px;
+    padding: 6px;
+  }
+  
+  .drawer-content #collection {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 /* Landscape mobile */
 @media (max-height: 500px) and (orientation: landscape) {
+  body {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+  
   #main-title {
-    font-size: 1.5rem;
-    margin-bottom: 5px;
+    width: 100%;
+    font-size: 1.3rem;
+    margin: 0;
   }
   
   #subtitle {
     display: none;
   }
   
+  .score-display {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    margin: 0;
+  }
+  
   #banana {
-    font-size: 4rem;
+    font-size: 3.5rem;
   }
   
   #banana-container {
-    margin: 10px 0;
+    margin: 5px;
   }
   
-  .score-display {
-    margin: 10px 0;
+  #inventory {
+    flex: 1;
+    max-height: 60vh;
+    margin-bottom: 60px;
+  }
+  
+  .drawer-toggle {
+    bottom: 10px !important;
+    width: 48px;
+    height: 48px;
   }
   
   .drawer-content {
     max-height: 80vh;
+    max-height: 80dvh;
+  }
+}
+
+/* Large screens - ensure desktop stays nice */
+@media (min-width: 769px) {
+  /* Toggles stay visible even when drawer open on desktop */
+  .drawer-toggle.hidden {
+    opacity: 0.6;
+    pointer-events: auto;
+  }
+  
+  .drawer-toggle.hidden:hover {
+    opacity: 1;
   }
 }

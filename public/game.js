@@ -20,26 +20,88 @@ const matrixRain = document.getElementById('matrix-rain');
 // DRAWER ELEMENTS
 const leftDrawer = document.getElementById('left-drawer');
 const rightDrawer = document.getElementById('right-drawer');
+const drawerBackdrop = document.getElementById('drawer-backdrop');
 const generateNameBtn = document.getElementById('generate-name');
 
-// Setup drawer toggles
+// Setup drawer toggles (buttons are now outside drawers)
 document.querySelectorAll('.drawer-toggle').forEach(btn => {
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
-    const drawer = btn.closest('.side-drawer');
+    const isLeft = btn.classList.contains('left-toggle');
+    const drawer = isLeft ? leftDrawer : rightDrawer;
+    
     // Close other drawers
     document.querySelectorAll('.side-drawer.open').forEach(d => {
       if (d !== drawer) d.classList.remove('open');
     });
+    
+    // Toggle this drawer
     drawer.classList.toggle('open');
+    
+    // Update button states
+    updateToggleVisibility();
   });
 });
 
-// Close drawers when clicking outside
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.side-drawer') && !e.target.closest('.drawer-toggle')) {
-    document.querySelectorAll('.side-drawer.open').forEach(d => d.classList.remove('open'));
+// Helper to update toggle button visibility and backdrop
+function updateToggleVisibility() {
+  const anyOpen = document.querySelector('.side-drawer.open');
+  
+  document.querySelectorAll('.drawer-toggle').forEach(b => {
+    const isLeft = b.classList.contains('left-toggle');
+    const targetDrawer = isLeft ? leftDrawer : rightDrawer;
+    if (targetDrawer.classList.contains('open')) {
+      b.classList.add('hidden');
+    } else {
+      b.classList.remove('hidden');
+    }
+  });
+  
+  // Show/hide backdrop on mobile
+  if (anyOpen && window.innerWidth <= 768) {
+    drawerBackdrop?.classList.add('visible');
+  } else {
+    drawerBackdrop?.classList.remove('visible');
   }
+}
+
+// Helper to close all drawers
+function closeAllDrawers() {
+  document.querySelectorAll('.side-drawer.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.drawer-toggle').forEach(b => b.classList.remove('hidden'));
+  drawerBackdrop?.classList.remove('visible');
+}
+
+// Close drawers when clicking backdrop or outside
+drawerBackdrop?.addEventListener('click', closeAllDrawers);
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.side-drawer') && !e.target.closest('.drawer-toggle') && !e.target.closest('.drawer-backdrop')) {
+    closeAllDrawers();
+  }
+});
+
+// Mobile swipe-to-close for drawers
+let touchStartY = 0;
+let touchStartX = 0;
+
+document.querySelectorAll('.drawer-content').forEach(content => {
+  content.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  
+  content.addEventListener('touchend', (e) => {
+    const touchEndY = e.changedTouches[0].clientY;
+    const touchEndX = e.changedTouches[0].clientX;
+    const deltaY = touchEndY - touchStartY;
+    const deltaX = Math.abs(touchEndX - touchStartX);
+    
+    // Swipe down to close (on mobile where drawers come from bottom)
+    if (deltaY > 60 && deltaX < 50 && window.innerWidth <= 768) {
+      closeAllDrawers();
+    }
+  }, { passive: true });
 });
 
 // Generate random username button
@@ -484,8 +546,13 @@ function hideComboDisplay() {
 
 
 
-// EPIC BANANA CLICK EVENT
-bananaEl.addEventListener('click', (e) => {
+// EPIC BANANA CLICK/TAP EVENT
+function handleBananaTap(e) {
+  // Prevent double-firing on touch devices
+  if (e.type === 'touchstart') {
+    e.preventDefault();
+  }
+  
   // Prevent audio context issues
   if (audioContext.state === 'suspended') {
     audioContext.resume();
@@ -542,7 +609,11 @@ bananaEl.addEventListener('click', (e) => {
   setTimeout(() => {
     bananaEl.style.transform = '';
   }, 200);
-});
+}
+
+// Register both click and touch events
+bananaEl.addEventListener('click', handleBananaTap);
+bananaEl.addEventListener('touchstart', handleBananaTap, { passive: false });
 
 function showGameOverModal() {
   const modal = document.createElement('div');
