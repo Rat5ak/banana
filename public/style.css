@@ -5,12 +5,18 @@ body {
   text-align: center;
   background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
   color: #fff;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
   margin: 0;
-  padding: 20px;
-  overflow-x: hidden;
+  padding: 15px;
+  overflow: hidden;
   position: relative;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
   /* Enable hardware acceleration for smoother performance */
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
@@ -297,34 +303,36 @@ body::after {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 45px;
-  height: 60px;
-  background: linear-gradient(135deg, rgba(78, 205, 196, 0.9), rgba(255, 107, 107, 0.9));
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 40px;
+  height: 50px;
+  background: linear-gradient(135deg, rgba(78, 205, 196, 0.8), rgba(255, 107, 107, 0.8));
+  border: 2px solid rgba(255, 255, 255, 0.2);
   color: white;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
+  opacity: 0.8;
 }
 
 .drawer-toggle:hover {
   transform: translateY(-50%) scale(1.1);
   box-shadow: 0 0 20px rgba(78, 205, 196, 0.6);
+  opacity: 1;
 }
 
 .left-toggle {
-  right: -45px;
-  border-radius: 0 12px 12px 0;
+  right: -40px;
+  border-radius: 0 10px 10px 0;
   border-left: none;
 }
 
 .right-toggle {
-  left: -45px;
-  border-radius: 12px 0 0 12px;
+  left: -40px;
+  border-radius: 10px 0 0 10px;
   border-right: none;
 }
 
@@ -506,7 +514,7 @@ body::after {
 #main-title {
   font-family: 'Orbitron', 'Impact', 'Arial Black', monospace;
   font-weight: 900;
-  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
   background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff6b6b);
   background-size: 400% 400%;
   -webkit-background-clip: text;
@@ -514,7 +522,7 @@ body::after {
   background-clip: text;
   animation: epicGradientShift 4s ease-in-out infinite;
   text-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
-  margin-bottom: 10px;
+  margin: 0 0 5px 0;
   position: relative;
   filter: drop-shadow(0 0 20px rgba(255, 107, 107, 0.4)) 
           drop-shadow(0 0 30px rgba(78, 205, 196, 0.3));
@@ -541,9 +549,9 @@ body::after {
 }
 
 #subtitle {
-  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
   color: #a0a0a0;
-  margin-bottom: 20px;
+  margin: 0 0 10px 0;
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
   animation: subtitleGlow 3s ease-in-out infinite alternate;
   filter: drop-shadow(0 0 10px rgba(160, 160, 160, 0.3));
@@ -630,8 +638,8 @@ body::after {
 }
 
 .score-display {
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  margin: 20px 0;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  margin: 8px 0;
   text-align: center;
   animation: scorePulse 2s ease-in-out infinite alternate;
 }
@@ -655,7 +663,7 @@ body::after {
 }
 
 #banana-container {
-  margin: 30px 0;
+  margin: 10px 0;
   position: relative;
   display: inline-block;
 }
@@ -947,7 +955,7 @@ button:disabled {
 }
 
 #banana {
-  font-size: clamp(5rem, 15vw, 7rem);
+  font-size: clamp(4rem, 12vw, 5.5rem);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.6, 1);
   display: inline-block;
@@ -1151,21 +1159,38 @@ button:disabled {
 }
 
 #inventory {
-  margin-top: 20px;
+  margin-top: 15px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
-  padding: 15px;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
+  align-content: flex-start;
+  gap: 10px;
+  padding: 10px;
+  max-width: 700px;
+  max-height: 22vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Scrollbar for inventory */
+#inventory::-webkit-scrollbar {
+  width: 6px;
+}
+
+#inventory::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+#inventory::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4ecdc4, #ff6b6b);
+  border-radius: 3px;
 }
 
 .banana-item {
-  flex: 0 1 130px;
-  margin: 8px;
-  padding: 12px;
+  flex: 0 1 110px;
+  margin: 4px;
+  padding: 10px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px); /* Safari support */
