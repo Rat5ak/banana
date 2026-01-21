@@ -316,13 +316,13 @@ body::after {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 2px solid rgba(78, 205, 196, 0.4);
-  padding: 20px;
+  padding: 15px;
   width: 260px;
   max-height: 70vh;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
 .side-drawer.left .drawer-content {
@@ -381,19 +381,19 @@ body::after {
 /* Login tabs */
 .login-tabs {
   display: flex;
-  gap: 5px;
-  margin-bottom: 10px;
+  gap: 4px;
+  margin-bottom: 6px;
 }
 
 .tab-btn {
   flex: 1;
-  padding: 8px 10px;
+  padding: 6px 8px;
   background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
   color: rgba(255, 255, 255, 0.6);
   font-family: 'Rajdhani', sans-serif;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -413,7 +413,7 @@ body::after {
 /* Username row with generate button */
 .username-row {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .username-row input {
@@ -423,17 +423,17 @@ body::after {
 
 /* Search row */
 .search-row {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .search-row input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: rgba(255, 255, 255, 0.08);
-  border: 2px solid rgba(255, 107, 107, 0.3);
-  border-radius: 10px;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 8px;
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: all 0.3s ease;
 }
 
@@ -448,13 +448,13 @@ body::after {
 }
 
 .icon-btn {
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   background: linear-gradient(135deg, #feca57, #ff9ff3);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-  font-size: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
   flex-shrink: 0;
@@ -471,9 +471,9 @@ body::after {
 
 .drawer-title {
   font-family: 'Orbitron', monospace;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #4ecdc4;
-  margin: 0 0 10px 0;
+  margin: 0 0 6px 0;
   text-transform: uppercase;
   letter-spacing: 1px;
   text-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
@@ -481,9 +481,9 @@ body::after {
 
 .drawer-content input {
   background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(78, 205, 196, 0.4);
-  border-radius: 10px;
-  padding: 10px 12px;
+  border: 1px solid rgba(78, 205, 196, 0.4);
+  border-radius: 8px;
+  padding: 8px 10px;
   color: #fff;
   font-size: 1rem; /* 16px minimum prevents iOS zoom */
   font-family: 'Rajdhani', sans-serif;
@@ -498,7 +498,7 @@ body::after {
 .drawer-content input:focus {
   outline: none;
   border-color: #4ecdc4;
-  box-shadow: 0 0 15px rgba(78, 205, 196, 0.5);
+  box-shadow: 0 0 10px rgba(78, 205, 196, 0.4);
 }
 
 .drawer-content input::placeholder {
@@ -507,22 +507,19 @@ body::after {
 
 .drawer-content .epic-button {
   width: 100%;
-  margin: 5px 0;
+  margin: 4px 0;
+  padding: 10px 15px;
+  font-size: 0.85rem;
 }
 
-/* Drawer scrollbar */
+/* Hide scrollbars but keep functionality */
+.drawer-content {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
 .drawer-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.drawer-content::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 3px;
-}
-
-.drawer-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #4ecdc4, #ff6b6b);
-  border-radius: 3px;
+  display: none; /* Chrome/Safari */
 }
 
 /* Leaderboard in drawer */
@@ -530,16 +527,22 @@ body::after {
   list-style: none;
   padding: 0;
   margin: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.drawer-content ol::-webkit-scrollbar {
+  display: none;
 }
 
 .drawer-content ol li {
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 8px 10px;
-  margin-bottom: 6px;
+  border-radius: 6px;
+  padding: 6px 8px;
+  margin-bottom: 4px;
   display: flex;
   justify-content: space-between;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   transition: all 0.3s ease;
 }
 
@@ -566,25 +569,31 @@ body::after {
 /* Collection in drawer */
 .drawer-content #collection {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.drawer-content #collection::-webkit-scrollbar {
+  display: none;
 }
 
 .drawer-content #collection .banana-item,
 .drawer-content #collection .collection-item {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 8px;
+  border-radius: 8px;
+  padding: 6px;
   text-align: center;
   aspect-ratio: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1rem;
   transition: all 0.3s ease;
   cursor: pointer;
-  gap: 2px;
+  gap: 1px;
 }
 
 .drawer-content #collection .banana-item:hover,
@@ -1281,19 +1290,14 @@ button:disabled {
   min-height: 0;
 }
 
-/* Scrollbar for inventory */
+/* Hide scrollbars but keep functionality */
+#inventory {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
 #inventory::-webkit-scrollbar {
-  width: 6px;
-}
-
-#inventory::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
-}
-
-#inventory::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #4ecdc4, #ff6b6b);
-  border-radius: 3px;
+  display: none; /* Chrome/Safari */
 }
 
 .banana-item {
@@ -2359,32 +2363,32 @@ div:has(#score) {
   
   /* Leaderboard in drawer */
   .drawer-content ol {
-    max-height: 30vh;
+    max-height: 35vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
   
   .drawer-content ol li {
-    padding: 12px;
-    min-height: 44px;
+    padding: 10px;
+    min-height: 40px;
     display: flex;
     align-items: center;
   }
   
   /* Collection in drawer */
   .drawer-content #collection {
-    max-height: 35vh;
+    max-height: 40vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
   }
   
   .drawer-content #collection .banana-item,
   .drawer-content #collection .collection-item {
-    padding: 10px;
-    font-size: 1.4rem;
-    min-height: 60px;
+    padding: 8px;
+    font-size: 1.2rem;
+    min-height: 50px;
   }
   
   /* Achievement popup - mobile friendly */
